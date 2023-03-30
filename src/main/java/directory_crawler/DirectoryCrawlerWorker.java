@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-public class DirectoryCrawlerWorker {
+public class DirectoryCrawlerWorker implements Runnable {
 
     private final String ROOT = "./src/resources/data/";
     private List<String> directories;
@@ -47,7 +47,7 @@ public class DirectoryCrawlerWorker {
 
         for (File file : Objects.requireNonNull(new File(path.toString()).listFiles())) {
             if (!file.isDirectory()) {
-                texts.add(new Text(file.getName(), file.lastModified()));
+                texts.add(new Text(file.getName()));
             }
         }
 
@@ -73,6 +73,33 @@ public class DirectoryCrawlerWorker {
         }
 
         return corpora;
+    }
+
+    @Override
+    public void run() {
+
+        List<Corpus> corpora = null;   /* TODO: Change to Class Attribute */
+
+        while (true) {
+
+            corpora = findCorpora();
+
+            for (Corpus corpus : corpora) {
+
+                for (Text text : corpus.getTexts()) {
+
+                    File file = new File(corpus.getPath() + "\\" + text.getName());
+
+                    if (Objects.isNull(text.getLastModified()) || file.lastModified() != text.getLastModified()) {
+                        /* TODO: Create Job and add it to JobQueue */
+                        text.setLastModified(file.lastModified());
+                    }
+
+                }
+            }
+
+        }
+
     }
 
 }

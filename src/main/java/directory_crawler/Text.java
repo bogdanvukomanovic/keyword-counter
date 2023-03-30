@@ -3,19 +3,31 @@ package directory_crawler;
 public class Text {
 
     private String name;
-    private long lastModified;
+    private Long lastModified;
 
     public Text(String name, long lastModified) {
         this.name = name;
         this.lastModified = lastModified;
     }
 
+    public Text(String name) {
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }
 
-    public long getLastModified() {
+    public Long getLastModified() {
         return lastModified;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLastModified(Long lastModified) {
+        this.lastModified = lastModified;
     }
 
 }
