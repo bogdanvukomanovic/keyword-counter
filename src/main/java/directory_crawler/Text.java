@@ -2,6 +2,8 @@ package directory_crawler;
 
 public class Text {
 
+    /* TODO: Try to make objects of this class immutable */
+
     private String name;
     private Long lastModified;
 

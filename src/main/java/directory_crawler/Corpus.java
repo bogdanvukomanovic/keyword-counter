@@ -5,6 +5,8 @@ import java.util.List;
 
 public class Corpus {
 
+    /* TODO: Try to make objects of this class immutable */
+
     private final String name;
     private final Path path;
     private List<Text> texts;

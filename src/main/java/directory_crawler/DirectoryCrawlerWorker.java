@@ -108,6 +108,7 @@ public class DirectoryCrawlerWorker implements Runnable {
 
         List<Corpus> candidates;
 
+        /* TODO: Add cancellation and sleep after each iteration */
         while (true) {
 
             candidates = findCorpora();
