@@ -1,18 +1,20 @@
 package directory_crawler;
 
+import app.Configuration;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 public class DirectoryCrawlerWorker implements Runnable {
 
-    private final String ROOT = "./src/resources/data/";
     private List<String> directories;
 
     public DirectoryCrawlerWorker() {
@@ -26,9 +28,9 @@ public class DirectoryCrawlerWorker implements Runnable {
 
         for (String directory : directories) {
 
-            try (Stream<Path> stream = Files.walk(Paths.get(ROOT + directory))) {
+            try (Stream<Path> stream = Files.walk(Paths.get(Configuration.DATA_ROOT + directory))) {
 
-                corpora.addAll(stream.filter(x -> Files.isDirectory(x) && Paths.get(x.toString()).getFileName().toString().startsWith("corpus_"))
+                corpora.addAll(stream.filter(x -> Files.isDirectory(x) && Paths.get(x.toString()).getFileName().toString().startsWith(Configuration.FILE_CORPUS_PREFIX))
                                      .map(x -> new Corpus(x.getFileName().toString(), x, extractAllTexts(x)))
                                      .toList());
 
@@ -47,7 +49,7 @@ public class DirectoryCrawlerWorker implements Runnable {
 
         for (File file : Objects.requireNonNull(new File(path.toString()).listFiles())) {
             if (!file.isDirectory()) {
-                texts.add(new Text(file.getName()));
+                texts.add(new Text(file.getName(), file.lastModified()));
             }
         }
 
@@ -75,27 +77,47 @@ public class DirectoryCrawlerWorker implements Runnable {
         return corpora;
     }
 
+    private boolean areFilesModified(Corpus corpus) {
+
+        boolean x = false;
+
+        for (Text text : corpus.getTexts()) {
+
+            File file = new File(corpus.getPath() + "\\" + text.getName());
+
+            if (file.lastModified() != text.getLastModified()) {
+                x = true;
+                text.setLastModified(file.lastModified());
+            }
+
+        }
+
+        return x;
+    }
+
     @Override
     public void run() {
 
-        List<Corpus> corpora = null;   /* TODO: Change to Class Attribute */
+        List<Corpus> candidates = null;   /* TODO: Change to Class Attribute */
+        HashMap<Path, Corpus> corpora = new HashMap<Path, Corpus>();
 
         while (true) {
 
-            corpora = findCorpora();
+            candidates = findCorpora();
 
-            for (Corpus corpus : corpora) {
+            for (Corpus corpus : candidates) {
 
-                for (Text text : corpus.getTexts()) {
-
-                    File file = new File(corpus.getPath() + "\\" + text.getName());
-
-                    if (Objects.isNull(text.getLastModified()) || file.lastModified() != text.getLastModified()) {
-                        /* TODO: Create Job and add it to JobQueue */
-                        text.setLastModified(file.lastModified());
-                    }
-
+                /* Brand-new corpus */
+                if (!corpora.containsKey(corpus.getPath())) {
+                    /* TODO: Create Job and add it to JobQueue */
+                    continue;
                 }
+
+                /* Old corpus - check if any files are modified in the meantime */
+                if (areFilesModified(corpus)) {
+                    /* TODO: Create Job and add it to JobQueue */
+                }
+
             }
 
         }

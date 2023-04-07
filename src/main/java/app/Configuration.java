@@ -13,6 +13,7 @@ public class Configuration {
     public static int FILE_SCANNING_SIZE_LIMIT;
     public static int HOP_COUNT;
     public static int URL_REFRESH_TIME;
+    public static String DATA_ROOT;
 
 
     public static void load() {
@@ -30,6 +31,7 @@ public class Configuration {
             FILE_SCANNING_SIZE_LIMIT = Integer.parseInt(properties.getProperty("FILE_SCANNING_SIZE_LIMIT"));
             HOP_COUNT = Integer.parseInt(properties.getProperty("HOP_COUNT"));
             URL_REFRESH_TIME = Integer.parseInt(properties.getProperty("URL_REFRESH_TIME"));
+            DATA_ROOT = properties.getProperty("DATA_ROOT");
 
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
