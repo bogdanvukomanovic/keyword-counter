@@ -6,8 +6,10 @@ public class Main {
 
     public static void main(String[] args) {
 
-        DirectoryCrawlerWorker DCWorker = new DirectoryCrawlerWorker();
-        System.out.println(DCWorker.crawl());
+        // DirectoryCrawlerWorker DCWorker = new DirectoryCrawlerWorker();
+        // System.out.println(DCWorker.crawl());
+
+        Configuration.load();
 
     }
 
