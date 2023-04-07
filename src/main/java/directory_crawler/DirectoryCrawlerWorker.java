@@ -56,27 +56,6 @@ public class DirectoryCrawlerWorker implements Runnable {
         return texts;
     }
 
-    public List<Corpus> crawl() {
-
-        List<Corpus> corpora = findCorpora();
-
-        for (Corpus corpus : corpora) {
-
-            System.out.println(corpus.getName());
-            System.out.println(corpus.getPath());
-            System.out.println(corpus.getTexts());
-
-            for (Text text : corpus.getTexts()) {
-                System.out.println("\t" + text.getName());
-                System.out.println("\t" + text.getLastModified());
-            }
-
-            System.out.println();
-        }
-
-        return corpora;
-    }
-
     private boolean areFilesModified(Corpus corpus) {
 
         boolean x = false;
