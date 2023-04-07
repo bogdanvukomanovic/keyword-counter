@@ -49,7 +49,7 @@ public class DirectoryCrawlerWorker implements Runnable {
 
         for (File file : Objects.requireNonNull(new File(path.toString()).listFiles())) {
             if (!file.isDirectory()) {
-                texts.add(new Text(file.getName(), file.lastModified()));
+                texts.add(new Text(file.getName()));
             }
         }
 
@@ -85,7 +85,8 @@ public class DirectoryCrawlerWorker implements Runnable {
 
             File file = new File(corpus.getPath() + "\\" + text.getName());
 
-            if (file.lastModified() != text.getLastModified()) {
+            /* New file added or any of the recorded files modified */
+            if (Objects.isNull(text.getLastModified()) || file.lastModified() != text.getLastModified()) {
                 x = true;
                 text.setLastModified(file.lastModified());
             }
@@ -109,13 +110,24 @@ public class DirectoryCrawlerWorker implements Runnable {
 
                 /* Brand-new corpus */
                 if (!corpora.containsKey(corpus.getPath())) {
+
                     /* TODO: Create Job and add it to JobQueue */
+                    System.out.println("Created job for corpus: " + corpus.getName());
+
+                    /* TODO: Set last modified? */
+                    for (Text text : corpus.getTexts()) {
+                        File file = new File(corpus.getPath() + "\\" + text.getName());
+                        text.setLastModified(file.lastModified());
+                    }
+
+                    corpora.put(corpus.getPath(), corpus);
                     continue;
                 }
 
-                /* Old corpus - check if any files are modified in the meantime */
-                if (areFilesModified(corpus)) {
+                /* Old corpus - check if any files are modified or added in the meantime */
+                if (areFilesModified(corpora.get(corpus.getPath()))) {
                     /* TODO: Create Job and add it to JobQueue */
+                    System.out.println("Created job for corpus: " + corpus.getName());
                 }
 
             }
