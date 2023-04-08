@@ -50,6 +50,7 @@ public class DirectoryCrawlerWorker implements Runnable {
         return corpora;
     }
 
+    /* TODO: Move to Corpus? */
     public List<Text> extractAllTexts(Path path) {
 
         List<Text> texts = new ArrayList<>();
@@ -63,6 +64,7 @@ public class DirectoryCrawlerWorker implements Runnable {
         return texts;
     }
 
+    /* TODO: Move to Corpus? */
     private boolean areTextsModified(Corpus corpus) {
 
         boolean x = false;
@@ -82,6 +84,7 @@ public class DirectoryCrawlerWorker implements Runnable {
         return x;
     }
 
+    /* TODO: Move to Corpus? */
     private void updateTextsModifiedValue(Corpus corpus) {
 
         for (Text text : corpus.getTexts()) {
