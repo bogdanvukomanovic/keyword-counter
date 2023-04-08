@@ -1,4 +1,4 @@
-package job_queue;
+package job_queue.job;
 
 import directory_crawler.Corpus;
 

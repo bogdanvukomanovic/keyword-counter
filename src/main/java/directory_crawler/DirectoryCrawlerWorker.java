@@ -1,8 +1,8 @@
 package directory_crawler;
 
 import app.Configuration;
-import job_queue.FileScanningJob;
-import job_queue.ScanningJob;
+import job_queue.JobQueue;
+import job_queue.job.FileScanningJob;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,12 +19,12 @@ import java.util.stream.Stream;
 public class DirectoryCrawlerWorker implements Runnable {
 
     private List<String> directories;
-    private BlockingQueue<ScanningJob> jobs;
+    private JobQueue jobs;
     private HashMap<Path, Corpus> corpora = new HashMap<Path, Corpus>();
     private volatile boolean working = true;
 
 
-    public DirectoryCrawlerWorker(List<String> directories, BlockingQueue<ScanningJob> jobs) {
+    public DirectoryCrawlerWorker(List<String> directories, JobQueue jobs) {
         this.directories = directories;
         this.jobs = jobs;
     }
@@ -92,17 +92,6 @@ public class DirectoryCrawlerWorker implements Runnable {
 
     }
 
-    /* TODO: Maybe add level of abstraction for Job queue? */
-    private void enqueue(FileScanningJob job) {
-
-        try {
-            jobs.put(job);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
     public void stop() {
         working = false;
     }
@@ -122,7 +111,7 @@ public class DirectoryCrawlerWorker implements Runnable {
                 if (!corpora.containsKey(corpus.getPath())) {
 
                     System.out.println("Created job for corpus: " + corpus.getName());
-                    enqueue(new FileScanningJob(corpus));
+                    jobs.enqueue(new FileScanningJob(corpus));
 
                     updateTextsModifiedValue(corpus);
 
@@ -135,7 +124,7 @@ public class DirectoryCrawlerWorker implements Runnable {
                 if (areTextsModified(corpora.get(corpus.getPath()))) {
 
                     System.out.println("Created job for corpus: " + corpus.getName());
-                    enqueue(new FileScanningJob(corpus));
+                    jobs.enqueue(new FileScanningJob(corpus));
 
                 }
 

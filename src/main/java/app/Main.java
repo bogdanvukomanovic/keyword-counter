@@ -1,9 +1,10 @@
 package app;
 
 import directory_crawler.DirectoryCrawlerWorker;
-import job_queue.ScanningJob;
 
-import java.util.Arrays;
+import job_queue.JobQueue;
+import job_queue.job.ScanningJob;
+
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
@@ -65,7 +66,8 @@ public class Main {
         Configuration.load();
 
         List<String> directories = new CopyOnWriteArrayList<>();
-        BlockingQueue<ScanningJob> jobs = new LinkedBlockingQueue<ScanningJob>(); /* TODO: Maybe change to ArrayBlockingQueue<>? */
+        JobQueue jobs = new JobQueue(new LinkedBlockingQueue<ScanningJob>()); /* TODO: Maybe change to ArrayBlockingQueue<>? */
+
 
         DirectoryCrawlerWorker DCWorker = new DirectoryCrawlerWorker(directories, jobs);
         Thread DCWorkerThread = new Thread(DCWorker);

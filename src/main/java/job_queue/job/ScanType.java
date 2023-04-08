@@ -1,4 +1,4 @@
-package job_queue;
+package job_queue.job;
 
 public enum ScanType {
 
