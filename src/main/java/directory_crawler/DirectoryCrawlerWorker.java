@@ -21,12 +21,12 @@ public class DirectoryCrawlerWorker implements Runnable {
     private List<String> directories;
     private BlockingQueue<ScanningJob> jobs;
     private HashMap<Path, Corpus> corpora = new HashMap<Path, Corpus>();
+    private volatile boolean working = true;
 
 
     public DirectoryCrawlerWorker(List<String> directories, BlockingQueue<ScanningJob> jobs) {
         this.directories = directories;
         this.jobs = jobs;
-        this.directories.add("data_0"); this.directories.add("data_1"); this.directories.add("data_2"); /* TODO: TBC */
     }
 
     private List<Corpus> findCorpora() {
@@ -103,13 +103,16 @@ public class DirectoryCrawlerWorker implements Runnable {
 
     }
 
+    public void stop() {
+        working = false;
+    }
+
     @Override
     public void run() {
 
         List<Corpus> candidates;
 
-        /* TODO: Add cancellation and sleep after each iteration */
-        while (true) {
+        while (working) {
 
             candidates = findCorpora();
 
@@ -136,6 +139,12 @@ public class DirectoryCrawlerWorker implements Runnable {
 
                 }
 
+            }
+
+            try {
+                Thread.sleep(Configuration.DIR_CRAWLER_SLEEP_TIME);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
 
         }
