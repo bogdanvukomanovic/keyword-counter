@@ -22,7 +22,7 @@ public class JobQueue {
 
     }
 
-    public ScanningJob dequeue(ScanningJob job) {
+    public ScanningJob dequeue() {
 
         try {
             return jobs.take();
