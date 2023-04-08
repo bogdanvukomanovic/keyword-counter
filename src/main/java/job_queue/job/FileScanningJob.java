@@ -16,7 +16,7 @@ public class FileScanningJob implements ScanningJob {
 
     @Override
     public ScanType getType() {
-        return null;
+        return scanType;
     }
 
     @Override

@@ -2,6 +2,7 @@ package app;
 
 import directory_crawler.DirectoryCrawlerWorker;
 
+import job_dispatcher.JobDispatcherWorker;
 import job_queue.JobQueue;
 import job_queue.job.ScanningJob;
 
@@ -72,6 +73,13 @@ public class Main {
         DirectoryCrawlerWorker DCWorker = new DirectoryCrawlerWorker(directories, jobs);
         Thread DCWorkerThread = new Thread(DCWorker);
         DCWorkerThread.start();
+
+        JobDispatcherWorker JDWorker = new JobDispatcherWorker(jobs);
+        Thread JDWorkerThread = new Thread(JDWorker);
+
+        JDWorkerThread.setDaemon(true); /* TODO: TBD */
+        JDWorkerThread.start();
+
 
         Scanner sc = new Scanner(System.in);
 
