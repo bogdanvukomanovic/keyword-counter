@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.BlockingQueue;
 import java.util.stream.Stream;
 
 public class DirectoryCrawlerWorker implements Runnable {
@@ -57,7 +56,7 @@ public class DirectoryCrawlerWorker implements Runnable {
 
         for (File file : Objects.requireNonNull(new File(path.toString()).listFiles())) {
             if (!file.isDirectory()) {
-                texts.add(new Text(file.getName()));
+                texts.add(new Text(file.getName(), file.getPath()));
             }
         }
 
@@ -65,6 +64,7 @@ public class DirectoryCrawlerWorker implements Runnable {
     }
 
     /* TODO: Move to Corpus? */
+    /* TODO: No need for corpus.getPath() + "\\" + text.getName(), because Text object has path */
     private boolean areTextsModified(Corpus corpus) {
 
         boolean x = false;
@@ -85,6 +85,7 @@ public class DirectoryCrawlerWorker implements Runnable {
     }
 
     /* TODO: Move to Corpus? */
+    /* TODO: No need for corpus.getPath() + "\\" + text.getName(), because Text object has path */
     private void updateTextsModifiedValue(Corpus corpus) {
 
         for (Text text : corpus.getTexts()) {
