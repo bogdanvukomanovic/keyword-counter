@@ -1,14 +1,18 @@
 package job_dispatcher;
 
 import job_queue.JobQueue;
+import job_queue.job.FileScanningJob;
 import job_queue.job.ScanningJob;
+import scanner.FileScanner;
 
 public class JobDispatcherWorker implements Runnable {
 
     private JobQueue jobs;
+    private FileScanner fileScanner;
 
-    public JobDispatcherWorker(JobQueue jobs) {
+    public JobDispatcherWorker(JobQueue jobs, FileScanner fileScanner) {
         this.jobs = jobs;
+        this.fileScanner = fileScanner;
     }
 
     @Override
@@ -25,6 +29,7 @@ public class JobDispatcherWorker implements Runnable {
 
                 case FILE:
                     System.out.println("Job dispatcher: FILE SCANNING JOB");
+                    fileScanner.scan((FileScanningJob) job);
                     continue;
                 case WEB:
                     System.out.println("Job dispatcher: WEB SCANNING JOB");

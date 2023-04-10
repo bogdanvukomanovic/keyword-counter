@@ -5,6 +5,7 @@ import directory_crawler.DirectoryCrawlerWorker;
 import job_dispatcher.JobDispatcherWorker;
 import job_queue.JobQueue;
 import job_queue.job.ScanningJob;
+import scanner.FileScanner;
 
 import java.util.List;
 import java.util.Scanner;
@@ -74,7 +75,9 @@ public class Main {
         Thread DCWorkerThread = new Thread(DCWorker);
         DCWorkerThread.start();
 
-        JobDispatcherWorker JDWorker = new JobDispatcherWorker(jobs);
+        FileScanner fileScanner = new FileScanner();
+
+        JobDispatcherWorker JDWorker = new JobDispatcherWorker(jobs, fileScanner);
         Thread JDWorkerThread = new Thread(JDWorker);
 
         JDWorkerThread.setDaemon(true); /* TODO: TBD */

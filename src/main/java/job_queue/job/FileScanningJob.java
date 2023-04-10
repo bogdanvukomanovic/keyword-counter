@@ -2,8 +2,6 @@ package job_queue.job;
 
 import directory_crawler.Corpus;
 
-import java.util.Map;
-import java.util.concurrent.Future;
 
 public class FileScanningJob implements ScanningJob {
 
@@ -19,14 +17,8 @@ public class FileScanningJob implements ScanningJob {
         return scanType;
     }
 
-    @Override
-    public String getQuery() {
-        return null;
-    }
-
-    @Override
-    public Future<Map<String, Integer>> initiate() {
-        return null;
+    public Corpus getCorpus() {
+        return corpus;
     }
 
 }

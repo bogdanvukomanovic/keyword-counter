@@ -14,17 +14,7 @@ public class WebScanningJob implements ScanningJob {
 
     @Override
     public ScanType getType() {
-        return null;
-    }
-
-    @Override
-    public String getQuery() {
-        return null;
-    }
-
-    @Override
-    public Future<Map<String, Integer>> initiate() {
-        return null;
+        return scanType;
     }
 
 }

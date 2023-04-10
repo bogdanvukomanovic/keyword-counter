@@ -1,4 +1,4 @@
-package scanner;
+package scanner.task;
 
 import app.Configuration;
 import directory_crawler.Text;
