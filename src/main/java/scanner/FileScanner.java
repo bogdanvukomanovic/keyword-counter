@@ -20,6 +20,7 @@ public class FileScanner {
         try {
 
             Map<String, Integer> countedKeywords = result.get();
+            System.out.println(countedKeywords);
 
             /* TODO: Send countedKeywords to Result retriever */
 

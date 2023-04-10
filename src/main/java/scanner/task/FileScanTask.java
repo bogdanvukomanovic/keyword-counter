@@ -69,9 +69,9 @@ public class FileScanTask extends RecursiveTask<Map<String, Integer>> {
                     words.add(input.next());
                 }
 
-                /* TODO: Make Set of Keywords */
-                // Map<String, Integer> count = (Map<String, Integer>) stream.filter(x -> Configuration.KEYWORDS.contain(x)).collect(Collectors.toMap(w -> w, w -> 1, Integer::sum));
-                Map<String, Integer> count = words.stream().collect(Collectors.toMap(w -> w, w -> 1, Integer::sum));
+                // Map<String, Integer> count = words.stream().collect(Collectors.toMap(w -> w, w -> 1, Integer::sum));
+                Map<String, Integer> count = words.stream().filter(x -> Configuration.KEYWORDS.contains(x)).collect(Collectors.toMap(w -> w, w -> 1, Integer::sum));
+
 
                 result = Stream.concat(result.entrySet().stream(), count.entrySet().stream())
                                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
@@ -92,8 +92,6 @@ public class FileScanTask extends RecursiveTask<Map<String, Integer>> {
 
         if (totalTextSize() < Configuration.FILE_SCANNING_SIZE_LIMIT || texts.size() == 1) {
             result = countWords(result);
-            System.out.println(result);
-
         } else {
 
             int mid = texts.size() / 2;
