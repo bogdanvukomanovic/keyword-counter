@@ -5,7 +5,9 @@ import directory_crawler.DirectoryCrawlerWorker;
 import job_dispatcher.JobDispatcherWorker;
 import job_queue.JobQueue;
 import job_queue.job.ScanningJob;
+import job_queue.job.WebScanningJob;
 import scanner.FileScanner;
+import scanner.WebScanner;
 
 import java.util.List;
 import java.util.Scanner;
@@ -36,6 +38,7 @@ public class Main {
     private class Command {
 
         final static String ADD_DIRECTORY = "ad";
+        final static String ADD_WEB = "aw";
         final static String STOP = "stop";
 
     }
@@ -67,23 +70,27 @@ public class Main {
 
         Configuration.load();
 
+        /* Shared memory structures */
         List<String> directories = new CopyOnWriteArrayList<>();
         JobQueue jobs = new JobQueue(new LinkedBlockingQueue<ScanningJob>()); /* TODO: Maybe change to ArrayBlockingQueue<>? */
 
-
+        /* Threads */
         DirectoryCrawlerWorker DCWorker = new DirectoryCrawlerWorker(directories, jobs);
         Thread DCWorkerThread = new Thread(DCWorker);
         DCWorkerThread.start();
 
         FileScanner fileScanner = new FileScanner();
+        WebScanner webScanner = new WebScanner(jobs);
 
-        JobDispatcherWorker JDWorker = new JobDispatcherWorker(jobs, fileScanner);
+        JobDispatcherWorker JDWorker = new JobDispatcherWorker(jobs, fileScanner, webScanner);
         Thread JDWorkerThread = new Thread(JDWorker);
 
         JDWorkerThread.setDaemon(true); /* TODO: TBD */
         JDWorkerThread.start();
 
 
+
+        /* Command Line Interface */
         Scanner sc = new Scanner(System.in);
 
         while (true) {
@@ -100,8 +107,13 @@ public class Main {
             switch (command) {
 
                 case Command.ADD_DIRECTORY:
-                    System.out.println(">> " + "Command: Add directory");
+                    System.out.println(">> Command: Add directory");
                     directories.add(argument);
+                    continue;
+
+                case Command.ADD_WEB:
+                    System.out.println(">> Command: Add web");
+                    jobs.enqueue(new WebScanningJob(argument, Configuration.HOP_COUNT));
                     continue;
 
                 case Command.STOP:

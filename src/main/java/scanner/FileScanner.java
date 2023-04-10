@@ -22,7 +22,9 @@ public class FileScanner {
             Map<String, Integer> countedKeywords = result.get();
             System.out.println(countedKeywords);
 
+            /* Two options: */
             /* TODO: Send countedKeywords to Result retriever */
+            /* TODO: FileScanTask should send result to Result retriever */
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
