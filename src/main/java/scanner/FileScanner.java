@@ -1,7 +1,6 @@
 package scanner;
 
 import job_queue.job.FileScanningJob;
-import job_queue.job.ScanningJob;
 import scanner.task.FileScanTask;
 
 import java.util.Map;
