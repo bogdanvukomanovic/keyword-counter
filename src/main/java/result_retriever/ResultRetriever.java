@@ -29,7 +29,7 @@ public class ResultRetriever {
 
     public Result getResult(String resultType, String target) {
 
-        Result result = new Result("ERROR", "msg", null);
+        Result result = new Result("ERROR", "", null);
 
         switch (resultType) {
 

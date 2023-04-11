@@ -24,7 +24,7 @@ public class Configuration {
 
         try {
 
-            FileInputStream in = new FileInputStream("./src/resources/application.properties");
+            FileInputStream in = new FileInputStream("./src/main/resources/application.properties");
             properties.load(in);
 
             KEYWORDS = new HashSet<>(List.of(properties.getProperty("KEYWORDS").split(",")));
