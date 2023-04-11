@@ -1,6 +1,6 @@
-package result_retriever.result;
+package result_retriever.response;
 
-public class ResultStatus {
+public class ResponseStatus {
 
     final static String OK = "OK";
     final static String ERROR = "ERROR";

@@ -1,8 +1,7 @@
 package result_retriever;
 
-import job_queue.job.ScanType;
+import result_retriever.response.Response;
 import result_retriever.result.Result;
-import result_retriever.result.ResultStatus;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,29 +17,29 @@ public class ResultRetriever {
 
     }
 
-    private Map<String, Future<Map<String, Integer>>> results;
+    private Map<String, Result> results;
     private Map<String, Boolean> webDomainCache = new ConcurrentHashMap<>();
     private Map<String, Future<Map<String, Integer>>> webCache = new ConcurrentHashMap<>();
     private Map<String, Future<Map<String, Integer>>> fileCache = new ConcurrentHashMap<>();
 
-    public ResultRetriever(Map<String, Future<Map<String, Integer>>> results) {
+    public ResultRetriever(Map<String, Result> results) {
         this.results = results;
     }
 
-    public Result getResult(String resultType, String target) {
+    public Response getResult(String resultType, String target) {
 
-        Result result = new Result("ERROR", "", null);
+        Response response = new Response("ERROR", "", null);
 
         switch (resultType) {
 
             case ResultType.FILE:
 
                 if (!results.containsKey(target)) {
-                    result = new Result("ERROR", "Corpus doesn't exist.", null);
+                    response = new Response("ERROR", "Corpus doesn't exist.", null);
                 }
 
                 try {
-                    result = new Result("OK", "msg", results.get(target).get());
+                    response = new Response("OK", "", results.get(target).getResult().get());
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } catch (ExecutionException e) {
@@ -55,7 +54,7 @@ public class ResultRetriever {
 
         }
 
-        return result;
+        return response;
     }
 
 }

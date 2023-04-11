@@ -5,6 +5,7 @@ import job_dispatcher.JobDispatcherWorker;
 import job_queue.JobQueue;
 import job_queue.job.ScanningJob;
 import result_retriever.ResultRetriever;
+import result_retriever.result.Result;
 import scanner.FileScanner;
 import scanner.WebScanner;
 
@@ -20,7 +21,7 @@ public class Controller {
     /* Shared memory structures */
     static List<String> directories;
     static JobQueue jobs;
-    static Map<String, Future<Map<String, Integer>>> results;
+    static Map<String, Result> results;
 
     /* Workers */
     static DirectoryCrawlerWorker DCWorker;

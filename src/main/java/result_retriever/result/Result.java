@@ -1,16 +1,14 @@
 package result_retriever.result;
 
-public record Result(String resultStatus, String errorMessage, Object content) {
+import java.util.Map;
+import java.util.concurrent.Future;
 
-    @Override
-    public String toString() {
+public abstract class Result {
 
-        if (resultStatus.equals(ResultStatus.OK)) {
-            return content.toString();
-        } else {
-            return "Error: " + errorMessage;
-        }
+    protected ResultType type;
+    protected Future<Map<String, Integer>> result;
 
-    }
+    public abstract ResultType getType();
+    public abstract Future<Map<String, Integer>> getResult();
 
 }
