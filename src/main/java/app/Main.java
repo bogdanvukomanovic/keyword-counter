@@ -6,14 +6,14 @@ import job_dispatcher.JobDispatcherWorker;
 import job_queue.JobQueue;
 import job_queue.job.ScanningJob;
 import job_queue.job.WebScanningJob;
+import result_retriever.ResultRetriever;
 import scanner.FileScanner;
 import scanner.WebScanner;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 
 public class Main {
@@ -39,6 +39,8 @@ public class Main {
 
         final static String ADD_DIRECTORY = "ad";
         final static String ADD_WEB = "aw";
+        final static String GET = "get";
+        final static String QUERY = "query";
         final static String STOP = "stop";
 
     }
@@ -73,14 +75,16 @@ public class Main {
         /* Shared memory structures */
         List<String> directories = new CopyOnWriteArrayList<>();
         JobQueue jobs = new JobQueue(new LinkedBlockingQueue<ScanningJob>()); /* TODO: Maybe change to ArrayBlockingQueue<>? */
+        Map<String, Future<Map<String, Integer>>> results = new ConcurrentHashMap<>();
 
         /* Threads */
         DirectoryCrawlerWorker DCWorker = new DirectoryCrawlerWorker(directories, jobs);
         Thread DCWorkerThread = new Thread(DCWorker);
         DCWorkerThread.start();
 
-        FileScanner fileScanner = new FileScanner();
-        WebScanner webScanner = new WebScanner(jobs);
+        FileScanner fileScanner = new FileScanner(results);
+        WebScanner webScanner = new WebScanner(jobs, results);
+        ResultRetriever resultRetriever = new ResultRetriever(results);
 
         JobDispatcherWorker JDWorker = new JobDispatcherWorker(jobs, fileScanner, webScanner);
         Thread JDWorkerThread = new Thread(JDWorker);
@@ -114,6 +118,12 @@ public class Main {
                 case Command.ADD_WEB:
                     System.out.println(">> Command: Add web");
                     jobs.enqueue(new WebScanningJob(argument, Configuration.HOP_COUNT));
+                    continue;
+
+                case Command.GET:
+                    continue;
+
+                case Command.QUERY:
                     continue;
 
                 case Command.STOP:

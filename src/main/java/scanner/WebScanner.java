@@ -13,11 +13,13 @@ public class WebScanner {
 
     ExecutorService threadPool = Executors.newCachedThreadPool();
     private JobQueue jobs;
+    private Map<String, Future<Map<String, Integer>>> results;
     private Set<String> cache;
 
 
-    public WebScanner(JobQueue jobs) {
+    public WebScanner(JobQueue jobs, Map<String, Future<Map<String, Integer>>> results) {
         this.jobs = jobs;
+        this.results = results;
         this.cache = new HashSet<String>();
     }
 
@@ -30,21 +32,23 @@ public class WebScanner {
         cache.add(job.getURL());
 
         Future<Map<String, Integer>> result = threadPool.submit(new WebScanTask(job.getURL(), job.getHopCount(), jobs));
+        // results.put(job, result);
+        results.put("job", result);
 
-        try {
-
-            Map<String, Integer> countedKeywords = result.get();
-            System.out.println(countedKeywords);
-
-            /* Two options: */
-            /* TODO: Send countedKeywords to Result retriever */
-            /* TODO: FileScanTask should send result to Result retriever */
-
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//
+//            Map<String, Integer> countedKeywords = result.get();
+//            System.out.println(countedKeywords);
+//
+//            /* Two options: */
+//            /* TODO: Send countedKeywords to Result retriever */
+//            /* TODO: FileScanTask should send result to Result retriever */
+//
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        } catch (ExecutionException e) {
+//            throw new RuntimeException(e);
+//        }
 
     }
 
