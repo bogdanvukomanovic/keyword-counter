@@ -23,6 +23,11 @@ public class Controller {
     static JobQueue jobs;
     static Map<String, Result> results;
 
+    /* Thread pools */
+    static FileScanner fileScanner;
+    static WebScanner webScanner;
+    static ResultRetriever resultRetriever;
+
     /* Workers */
     static DirectoryCrawlerWorker DCWorker;
     static JobDispatcherWorker JDWorker;
@@ -31,17 +36,17 @@ public class Controller {
     static Thread DCWorkerThread;
     static Thread JDWorkerThread;
 
-    /* Web pools */
-    static FileScanner fileScanner;
-    static WebScanner webScanner;
-    static ResultRetriever resultRetriever;
-
     static void initialize() {
 
         /* Shared memory structures */
         directories = new CopyOnWriteArrayList<>();
         jobs = new JobQueue(new LinkedBlockingQueue<ScanningJob>()); /* TODO: Maybe change to ArrayBlockingQueue<>? */
         results = new ConcurrentHashMap<>();
+
+        /* Thread pools */
+        fileScanner = new FileScanner(results);
+        webScanner = new WebScanner(jobs, results);
+        resultRetriever = new ResultRetriever(results);
 
         /* Workers */
         DCWorker = new DirectoryCrawlerWorker(directories, jobs);
@@ -50,11 +55,6 @@ public class Controller {
         /* Threads */
         DCWorkerThread = new Thread(DCWorker);
         JDWorkerThread = new Thread(JDWorker);
-
-        /* Thread pools */
-        fileScanner = new FileScanner(results);
-        webScanner = new WebScanner(jobs, results);
-        resultRetriever = new ResultRetriever(results);
 
         /* Start threads */
         DCWorkerThread.start();

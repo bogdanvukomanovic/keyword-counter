@@ -18,8 +18,10 @@ public class FileSummaryTask implements Callable<Map<String, Result>> {
 
     @Override
     public Map<String, Result> call() throws Exception {
-        return getFileTypeEntries(results);
 
+        /* TODO: Before returning assert that all counting jobs are finished */
+
+        return getFileTypeEntries(results);
     }
 
     private boolean isFile(Result result) {

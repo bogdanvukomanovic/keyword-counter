@@ -1,6 +1,7 @@
 package app;
 
 import job_queue.job.WebScanningJob;
+import result_retriever.response.Response;
 
 import java.util.Scanner;
 
@@ -111,6 +112,8 @@ public class CLI {
                                 /* TODO: Result Retriever Summary */
                             } else {
                                 /* TODO: Result Retriever get keyword count for Corpus "target"  */
+                                Response response = Controller.resultRetriever.getResult(type, target);
+                                System.out.println(response);
                             }
 
                             break;
