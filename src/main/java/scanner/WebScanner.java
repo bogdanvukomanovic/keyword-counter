@@ -23,12 +23,18 @@ public class WebScanner {
     private JobQueue jobs;
     private Map<String, Result> results;
     private Set<String> cache;
+    private WebScannerRefreshWorker webScannerRefreshWorker;
 
 
     public WebScanner(JobQueue jobs, Map<String, Result> results) {
         this.jobs = jobs;
         this.results = results;
         this.cache = new HashSet<String>();
+
+        this.webScannerRefreshWorker = new WebScannerRefreshWorker(this.cache);
+
+        Thread webScanRefresherThread = new Thread(webScannerRefreshWorker);
+        webScanRefresherThread.start();
     }
 
     public void scan(WebScanningJob job) {
@@ -51,6 +57,7 @@ public class WebScanner {
 
             results.put(job.getURL(), new WebResult(result, domain));
 
+            /* TODO: Fields webSummaryCache and webDomainCache should not be static, maybe pass the ResultRetriever reference to WebScanner? */
             /* Each new web page, makes webSummaryCache dirty */
             ResultRetriever.webSummaryCache.set(null);
             /* Also, the corresponding domain is no longer up to date */
@@ -67,35 +74,6 @@ public class WebScanner {
         } catch (IllegalArgumentException e) {
             System.out.println("IllegalArgumentException");
         }
-
-//        cache.add(job.getURL());
-//
-//        Future<Map<String, Integer>> result = threadPool.submit(new WebScanTask(job.getURL(), job.getHopCount(), jobs));
-//
-//        String domain;
-//        try {
-//            domain = new URI(job.getURL()).getHost();
-//        } catch (URISyntaxException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        results.put(job.getURL(), new WebResult(result, domain));
-//        System.out.println("\t\t\t\t\t\t\t" + domain);
-
-//        try {
-//
-//            Map<String, Integer> countedKeywords = result.get();
-//            System.out.println(countedKeywords);
-//
-//            /* Two options: */
-//            /* TODO: Send countedKeywords to Result retriever */
-//            /* TODO: FileScanTask should send result to Result retriever */
-//
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        } catch (ExecutionException e) {
-//            throw new RuntimeException(e);
-//        }
 
     }
 
