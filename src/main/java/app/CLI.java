@@ -7,10 +7,10 @@ import java.util.Scanner;
 
 public class CLI {
 
-    private static String command;
-    private static String argument;
-    private static String type;
-    private static String target;
+    private static String command = "";
+    private static String argument = "";
+    private static String type = "";
+    private static String target = "";
 
     private class Command {
 
@@ -88,6 +88,7 @@ public class CLI {
 
             if (!parse(sc.nextLine())) {
                 System.out.println("Error: Invalid command format.");
+                continue;
             }
 
             if (target.equals(Command.SUMMARY)) {

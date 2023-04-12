@@ -5,6 +5,7 @@ import result_retriever.response.ResponseStatus;
 import result_retriever.result.Result;
 import result_retriever.task.FileSummaryTask;
 import result_retriever.task.WebDomainTask;
+import result_retriever.task.WebSummaryTask;
 
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public class ResultRetriever {
 
     private Map<String, Result> results;
     public static Map<String, Optional<Future<Map<String, Integer>>>> webDomainCache = new ConcurrentHashMap<>();
-    public static AtomicReference<Map<String, Future<Map<String, Integer>>>> webSummaryCache = new AtomicReference<>();
+    public static AtomicReference<Future<Map<String, Map<String, Integer>>>> webSummaryCache = new AtomicReference<>();
     public static AtomicReference<Future<Map<String, Result>>> fileSummaryCache = new AtomicReference<>();
 
     public ResultRetriever(Map<String, Result> results) {
@@ -84,16 +85,43 @@ public class ResultRetriever {
 
     public Response getSummary(String resultType) {
 
-        fileSummaryCache.compareAndSet(null, threadPool.submit(new FileSummaryTask(results)));
+        Response response;
 
-        try {
-            return new Response(ResponseStatus.OK, "", fileSummaryCache.get().get());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
+        switch (resultType) {
+
+            case ResultType.FILE:
+
+                fileSummaryCache.compareAndSet(null, threadPool.submit(new FileSummaryTask(results)));
+
+                try {
+                    response = new Response(ResponseStatus.OK, "", fileSummaryCache.get().get());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+
+                break;
+
+            case ResultType.WEB:
+
+                webSummaryCache.compareAndSet(null, threadPool.submit(new WebSummaryTask(results)));
+
+                try {
+                    response = new Response(ResponseStatus.OK, "", webSummaryCache.get().get());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+
+                break;
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + resultType);
         }
 
+        return response;
     }
 
     public Response queryResult(String resultType, String target) {
@@ -161,26 +189,62 @@ public class ResultRetriever {
 
     public Response querySummary(String resultType) {
 
-        fileSummaryCache.compareAndSet(null, threadPool.submit(new FileSummaryTask(results)));
+        Response response;
 
-        if (!fileSummaryCache.get().isDone()) {
-            return new Response(ResponseStatus.IN_PROGRESS, "Result is not ready yet.", null);
-        } else {
+        switch (resultType) {
 
-            try {
-                return new Response(ResponseStatus.OK, "", fileSummaryCache.get().get());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            }
+            case ResultType.FILE:
+
+                fileSummaryCache.compareAndSet(null, threadPool.submit(new FileSummaryTask(results)));
+
+                if (!fileSummaryCache.get().isDone()) {
+                    response = new Response(ResponseStatus.IN_PROGRESS, "Result is not ready yet.", null);
+                } else {
+
+                    try {
+                        response = new Response(ResponseStatus.OK, "", fileSummaryCache.get().get());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+
+                break;
+
+            case ResultType.WEB:
+                webSummaryCache.compareAndSet(null, threadPool.submit(new WebSummaryTask(results)));
+
+                if (!webSummaryCache.get().isDone()) {
+                    response = new Response(ResponseStatus.IN_PROGRESS, "Result is not ready yet.", null);
+                } else {
+
+                    try {
+                        response = new Response(ResponseStatus.OK, "", fileSummaryCache.get().get());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                }
+                break;
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + resultType);
 
         }
 
+        return response;
     }
 
     public void clearFileSummary() {
         fileSummaryCache.set(null);
+    }
+
+    public void clearWebSummary() {
+        webSummaryCache.set(null);
     }
 
 }
