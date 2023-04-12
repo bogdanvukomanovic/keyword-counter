@@ -5,9 +5,12 @@ import java.util.concurrent.Future;
 
 public class WebResult extends Result {
 
-    public WebResult(Future<Map<String, Integer>> result) {
+    private String domain;
+
+    public WebResult(Future<Map<String, Integer>> result, String domain) {
         this.type = ResultType.WEB;
         this.result = result;
+        this.domain = domain;
     }
 
     @Override
@@ -18,6 +21,10 @@ public class WebResult extends Result {
     @Override
     public Future<Map<String, Integer>> getResult() {
         return this.result;
+    }
+
+    public String getDomain() {
+        return domain;
     }
 
 }

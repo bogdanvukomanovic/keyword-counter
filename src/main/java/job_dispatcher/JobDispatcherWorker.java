@@ -32,7 +32,7 @@ public class JobDispatcherWorker implements Runnable {
             switch (job.getType()) {
 
                 case FILE:
-                    System.out.println("Job dispatcher: FILE SCANNING JOB ");
+                    System.out.println("Job dispatcher: FILE SCANNING JOB");
                     fileScanner.scan((FileScanningJob) job);
                     continue;
                 case WEB:

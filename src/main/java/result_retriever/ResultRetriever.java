@@ -3,9 +3,10 @@ package result_retriever;
 import result_retriever.response.Response;
 import result_retriever.result.Result;
 import result_retriever.task.FileSummaryTask;
+import result_retriever.task.WebDomainTask;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,8 +22,8 @@ public class ResultRetriever {
     ExecutorService threadPool = Executors.newCachedThreadPool();
 
     private Map<String, Result> results;
-    private Map<String, Boolean> webDomainCache = new ConcurrentHashMap<>();
-    private Map<String, Future<Map<String, Integer>>> webSummaryCache = new ConcurrentHashMap<>();
+    public static Map<String, Optional<Future<Map<String, Integer>>>> webDomainCache = new ConcurrentHashMap<>();
+    public static AtomicReference<Map<String, Future<Map<String, Integer>>>> webSummaryCache = new AtomicReference<>();
     public static AtomicReference<Future<Map<String, Result>>> fileSummaryCache = new AtomicReference<>();
 
     public ResultRetriever(Map<String, Result> results) {
@@ -32,7 +33,7 @@ public class ResultRetriever {
 
     public Response getResult(String resultType, String target) {
 
-        Response response = new Response("ERROR", "", null);
+        Response response;
 
         switch (resultType) {
 
@@ -50,7 +51,26 @@ public class ResultRetriever {
                     throw new RuntimeException(e);
                 }
 
+                break;
+
             case ResultType.WEB:
+
+                if (!webDomainCache.containsKey(target)) {
+                    return new Response("ERROR", "Domain doesn't exist.", null);
+                }
+
+                if (webDomainCache.get(target).isEmpty()) {
+                    webDomainCache.put(target, Optional.of(threadPool.submit(new WebDomainTask(target, results))));
+                }
+
+                try {
+                    response = new Response("OK", "", webDomainCache.get(target).get().get());
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
+
                 break;
 
             default:
@@ -132,46 +152,5 @@ public class ResultRetriever {
     public void clearFileSummary() {
         fileSummaryCache.set(null);
     }
-
-    /* TODO: TBD */
-//    public Response getFileSummary() {
-//        if (fileSummaryCache.compareAndSet(null, threadPool.submit(new FileSummaryTask(results)))) {
-//
-//            try {
-//                response = new Response( "OK", "", fileSummaryCache.get().get());
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            } catch (ExecutionException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//        } else {
-//
-//            try {
-//                response = new Response( "OK", "", fileSummaryCache.get().get());
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            } catch (ExecutionException e) {
-//                throw new RuntimeException(e);
-//            }
-//
-//        }
-//    }
-
-    /* TODO: TBD */
-//    public Response getFileSummary() {
-//        Response response;
-//
-//        Future<Map<String, Result>> result = threadPool.submit(new FileSummaryTask(results));
-//            try {s
-//            response = new Response("OK", "", result.get());
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        } catch (ExecutionException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        return response;
-//    }
 
 }

@@ -20,26 +20,28 @@ public class FileSummaryTask implements Callable<Map<String, Result>> {
     public Map<String, Result> call() throws Exception {
 
         /* TODO: Check if this is fine: Before returning assert that all counting jobs are finished */
-        for (Map.Entry<String, Result> entry : results.entrySet()) {
+        Map<String, Result> fileResults = getFileTypeEntries(results);
+        for (Map.Entry<String, Result> entry : fileResults.entrySet()) {
             entry.getValue().getResult().get();
         }
 
-        return getFileTypeEntries(results);
+        return getFileTypeEntries(fileResults);
     }
 
-    private boolean isFile(Result result) {
-
-        if (result.getType().equals(ResultType.FILE)) {
-            return true;
-        } else {
-            return false;
-        }
-
-    }
+//    private boolean isFile(Result result) {
+//
+//        if (result.getType().equals(ResultType.FILE)) {
+//            return true;
+//        } else {
+//            return false;
+//        }
+//
+//    }
 
     private <K, V> Map<K, V> getFileTypeEntries(Map<K, V> map) {
 
-        Predicate<V> predicate = value -> isFile((Result) value);
+        // Predicate<V> predicate = value -> isFile((Result) value);
+        Predicate<V> predicate = value ->  ((Result) value).getType().equals(ResultType.FILE);
 
         return map.entrySet().stream()
                 .filter(entry -> predicate.test(entry.getValue()))

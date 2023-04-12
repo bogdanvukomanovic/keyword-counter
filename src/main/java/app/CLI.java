@@ -82,10 +82,27 @@ public class CLI {
 
         Scanner sc = new Scanner(System.in);
 
+        Response response;
+
         while (true) {
 
             if (!parse(sc.nextLine())) {
                 System.out.println("Error: Invalid command format.");
+            }
+
+            if (target.equals(Command.SUMMARY)) {
+
+                switch (command) {
+
+                    case Command.GET:
+                        response = Controller.resultRetriever.getFileSummary();
+                        System.out.println(response);
+                        continue;
+
+                    case Command.SUMMARY:
+                        continue;
+                }
+
             }
 
             switch (command) {
@@ -104,47 +121,14 @@ public class CLI {
 
                 case Command.GET:
 
-                    switch (type) {
-
-                        case Type.FILE:
-
-                            Response response;
-                            if (target.equals(Command.SUMMARY)) {
-                                response = Controller.resultRetriever.getFileSummary();
-                            } else {
-                                response = Controller.resultRetriever.getResult(type, target);
-                            }
-                            System.out.println(response);
-
-                            break;
-
-                        case Type.WEB:
-                            break;
-                    }
-
+                    response = Controller.resultRetriever.getResult(type, target);
+                    System.out.println(response);
                     continue;
 
                 case Command.QUERY:
 
-                    switch (type) {
-
-                        case Type.FILE:
-
-                            Response response;
-                            if (target.equals(Command.SUMMARY)) {
-                                response = Controller.resultRetriever.queryFileSummary();
-                            } else {
-                                response = Controller.resultRetriever.queryResult(type, target);
-                            }
-                            System.out.println(response);
-
-                            break;
-
-                        case Type.WEB:
-                            break;
-
-                    }
-
+                    response = Controller.resultRetriever.queryResult(type, target);
+                    System.out.println(response);
                     continue;
 
                 case Command.CLEAR_FILE_SUMMARY:
