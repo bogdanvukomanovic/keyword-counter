@@ -1,6 +1,7 @@
 package result_retriever;
 
 import result_retriever.response.Response;
+import result_retriever.response.ResponseStatus;
 import result_retriever.result.Result;
 import result_retriever.task.FileSummaryTask;
 import result_retriever.task.WebDomainTask;
@@ -40,11 +41,11 @@ public class ResultRetriever {
             case ResultType.FILE:
 
                 if (!results.containsKey(target)) {
-                    return new Response("ERROR", "Corpus doesn't exist.", null);
+                    return new Response(ResponseStatus.ERROR, "Corpus doesn't exist.", null);
                 }
 
                 try {
-                    response = new Response("OK", "", results.get(target).getResult().get());
+                    response = new Response(ResponseStatus.OK, "", results.get(target).getResult().get());
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } catch (ExecutionException e) {
@@ -56,7 +57,7 @@ public class ResultRetriever {
             case ResultType.WEB:
 
                 if (!webDomainCache.containsKey(target)) {
-                    return new Response("ERROR", "Domain doesn't exist.", null);
+                    return new Response(ResponseStatus.ERROR, "Domain doesn't exist.", null);
                 }
 
                 if (webDomainCache.get(target).isEmpty()) {
@@ -64,7 +65,7 @@ public class ResultRetriever {
                 }
 
                 try {
-                    response = new Response("OK", "", webDomainCache.get(target).get().get());
+                    response = new Response(ResponseStatus.OK, "", webDomainCache.get(target).get().get());
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } catch (ExecutionException e) {
@@ -81,12 +82,12 @@ public class ResultRetriever {
         return response;
     }
 
-    public Response getFileSummary() {
+    public Response getSummary(String resultType) {
 
         fileSummaryCache.compareAndSet(null, threadPool.submit(new FileSummaryTask(results)));
 
         try {
-            return new Response("OK", "", fileSummaryCache.get().get());
+            return new Response(ResponseStatus.OK, "", fileSummaryCache.get().get());
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } catch (ExecutionException e) {
@@ -97,24 +98,24 @@ public class ResultRetriever {
 
     public Response queryResult(String resultType, String target) {
 
-        Response response = null;
+        Response response;
 
         switch (resultType) {
 
             case ResultType.FILE:
 
                 if (!results.containsKey(target)) {
-                    return new Response("ERROR", "Corpus doesn't exist.", null);
+                    return new Response(ResponseStatus.ERROR, "Corpus doesn't exist.", null);
                 }
 
                 Result result = results.get(target);
 
                 if (!result.getResult().isDone()) {
-                    return new Response("IN_PROGRESS", "Result is not ready yet.", null);
+                    return new Response(ResponseStatus.IN_PROGRESS, "Result is not ready yet.", null);
                 } else {
 
                     try {
-                        response = new Response("OK", "", result.getResult().get());
+                        response = new Response(ResponseStatus.OK, "", result.getResult().get());
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     } catch (ExecutionException e) {
@@ -124,21 +125,50 @@ public class ResultRetriever {
                 }
 
                 break;
+
+            case ResultType.WEB:
+
+                if (!webDomainCache.containsKey(target)) {
+                    return new Response(ResponseStatus.ERROR, "Domain doesn't exist.", null);
+                }
+
+                if (webDomainCache.get(target).isEmpty()) {
+                    webDomainCache.put(target, Optional.of(threadPool.submit(new WebDomainTask(target, results))));
+                }
+
+                Future<Map<String, Integer>> r = webDomainCache.get(target).get();
+
+                if (!r.isDone()) {
+                    return new Response(ResponseStatus.IN_PROGRESS, "Result is not ready yet.", null);
+                } else {
+                    try {
+                        response = new Response(ResponseStatus.OK, "", r.get());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                break;
+
+            default:
+                throw new IllegalStateException("Unexpected value: " + resultType);
         }
 
         return response;
     }
 
-    public Response queryFileSummary() {
+    public Response querySummary(String resultType) {
 
         fileSummaryCache.compareAndSet(null, threadPool.submit(new FileSummaryTask(results)));
 
         if (!fileSummaryCache.get().isDone()) {
-            return new Response("IN_PROGRESS", "Result is not ready yet.", null);
+            return new Response(ResponseStatus.IN_PROGRESS, "Result is not ready yet.", null);
         } else {
 
             try {
-                return new Response("OK", "", fileSummaryCache.get().get());
+                return new Response(ResponseStatus.OK, "", fileSummaryCache.get().get());
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             } catch (ExecutionException e) {

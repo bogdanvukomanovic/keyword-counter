@@ -1,6 +1,6 @@
 package result_retriever.response;
 
-public record Response(String responseStatus, String message, Object content) {
+public record Response(ResponseStatus responseStatus, String message, Object content) {
 
     @Override
     public String toString() {

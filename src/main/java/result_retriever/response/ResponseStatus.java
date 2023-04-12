@@ -1,9 +1,9 @@
 package result_retriever.response;
 
-public class ResponseStatus {
+public enum ResponseStatus {
 
-    final static String OK = "OK";
-    final static String ERROR = "ERROR";
-    final static String IN_PROGRESS = "IN_PROGRESS";
+    OK,
+    ERROR,
+    IN_PROGRESS
 
 }

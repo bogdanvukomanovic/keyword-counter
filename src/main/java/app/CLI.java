@@ -95,11 +95,13 @@ public class CLI {
                 switch (command) {
 
                     case Command.GET:
-                        response = Controller.resultRetriever.getFileSummary();
+                        response = Controller.resultRetriever.getSummary(type);
                         System.out.println(response);
                         continue;
 
-                    case Command.SUMMARY:
+                    case Command.QUERY:
+                        response = Controller.resultRetriever.querySummary(type);
+                        System.out.println(response);
                         continue;
                 }
 
