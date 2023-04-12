@@ -139,6 +139,7 @@ public class CLI {
                     continue;
 
                 case Command.CLEAR_WEB_SUMMARY:
+                    Controller.resultRetriever.clearWebSummary();
                     continue;
 
                 case Command.STOP:
