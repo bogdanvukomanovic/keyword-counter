@@ -19,7 +19,10 @@ public class FileSummaryTask implements Callable<Map<String, Result>> {
     @Override
     public Map<String, Result> call() throws Exception {
 
-        /* TODO: Before returning assert that all counting jobs are finished */
+        /* TODO: Check if this is fine: Before returning assert that all counting jobs are finished */
+        for (Map.Entry<String, Result> entry : results.entrySet()) {
+            entry.getValue().getResult().get();
+        }
 
         return getFileTypeEntries(results);
     }

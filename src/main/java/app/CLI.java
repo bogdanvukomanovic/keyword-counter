@@ -108,13 +108,13 @@ public class CLI {
 
                         case Type.FILE:
 
+                            Response response;
                             if (target.equals(Command.SUMMARY)) {
-                                /* TODO: Result Retriever Summary */
+                                response = Controller.resultRetriever.getFileSummary();
                             } else {
-                                /* TODO: Result Retriever get keyword count for Corpus "target"  */
-                                Response response = Controller.resultRetriever.getResult(type, target);
-                                System.out.println(response);
+                                response = Controller.resultRetriever.getResult(type, target);
                             }
+                            System.out.println(response);
 
                             break;
 
@@ -125,9 +125,30 @@ public class CLI {
                     continue;
 
                 case Command.QUERY:
+
+                    switch (type) {
+
+                        case Type.FILE:
+
+                            Response response;
+                            if (target.equals(Command.SUMMARY)) {
+                                response = Controller.resultRetriever.queryFileSummary();
+                            } else {
+                                response = Controller.resultRetriever.queryResult(type, target);
+                            }
+                            System.out.println(response);
+
+                            break;
+
+                        case Type.WEB:
+                            break;
+
+                    }
+
                     continue;
 
                 case Command.CLEAR_FILE_SUMMARY:
+                    Controller.resultRetriever.clearFileSummary();
                     continue;
 
                 case Command.CLEAR_WEB_SUMMARY:
