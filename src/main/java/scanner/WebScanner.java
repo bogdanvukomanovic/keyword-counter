@@ -1,16 +1,14 @@
 package scanner;
 
 import job_queue.JobQueue;
-import job_queue.job.WebScanningJob;
+import job_queue.job.WebJob;
 import org.jsoup.Jsoup;
 import result_retriever.ResultRetriever;
 import result_retriever.result.Result;
 import result_retriever.result.WebResult;
 import scanner.task.WebScanTask;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
@@ -37,7 +35,7 @@ public class WebScanner {
         webScanRefresherThread.start();
     }
 
-    public void scan(WebScanningJob job) {
+    public void scan(WebJob job) {
 
         if (cache.contains(job.getURL())) {
             return;

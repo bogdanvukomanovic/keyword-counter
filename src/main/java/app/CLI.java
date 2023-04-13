@@ -1,7 +1,7 @@
 package app;
 
 import job_queue.job.PoisonJob;
-import job_queue.job.WebScanningJob;
+import job_queue.job.WebJob;
 import org.jsoup.Jsoup;
 
 import java.nio.file.Files;
@@ -194,7 +194,7 @@ public class CLI {
                 case Command.ADD_WEB:
 
                     if (isURLValid(argument)) {
-                        Controller.jobs.enqueue(new WebScanningJob(argument, Configuration.HOP_COUNT));
+                        Controller.jobs.enqueue(new WebJob(argument, Configuration.HOP_COUNT));
                     }
 
                     continue;

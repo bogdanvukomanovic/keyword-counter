@@ -1,18 +1,18 @@
 package job_queue;
 
-import job_queue.job.ScanningJob;
+import job_queue.job.Job;
 
 import java.util.concurrent.BlockingQueue;
 
 public class JobQueue {
 
-    private BlockingQueue<ScanningJob> jobs;
+    private BlockingQueue<Job> jobs;
 
-    public JobQueue(BlockingQueue<ScanningJob> jobs) {
+    public JobQueue(BlockingQueue<Job> jobs) {
         this.jobs = jobs;
     }
 
-    public void enqueue(ScanningJob job) {
+    public void enqueue(Job job) {
 
         try {
             jobs.put(job);
@@ -22,7 +22,7 @@ public class JobQueue {
 
     }
 
-    public ScanningJob dequeue() {
+    public Job dequeue() {
 
         try {
             return jobs.take();

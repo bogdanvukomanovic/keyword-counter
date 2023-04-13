@@ -1,6 +1,6 @@
 package scanner;
 
-import job_queue.job.FileScanningJob;
+import job_queue.job.FileJob;
 import result_retriever.ResultRetriever;
 import result_retriever.result.FileResult;
 import result_retriever.result.Result;
@@ -20,7 +20,7 @@ public class FileScanner {
         this.results = results;
     }
 
-    public void scan(FileScanningJob job) {
+    public void scan(FileJob job) {
 
         System.out.println(">> Starting file scan for: file|" + job.getCorpus().getName());
         Future<Map<String, Integer>> result = forkJoinPool.submit(new FileScanTask(job.getCorpus().getTexts()));

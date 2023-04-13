@@ -3,7 +3,7 @@ package app;
 import directory_crawler.DirectoryCrawlerWorker;
 import job_dispatcher.JobDispatcherWorker;
 import job_queue.JobQueue;
-import job_queue.job.ScanningJob;
+import job_queue.job.Job;
 import result_retriever.ResultRetriever;
 import result_retriever.result.Result;
 import scanner.FileScanner;
@@ -39,7 +39,7 @@ public class Controller {
 
         /* Shared memory structures */
         directories = new CopyOnWriteArrayList<>();
-        jobs = new JobQueue(new LinkedBlockingQueue<ScanningJob>()); /* TODO: Maybe change to ArrayBlockingQueue<>? */
+        jobs = new JobQueue(new LinkedBlockingQueue<Job>()); /* TODO: Maybe change to ArrayBlockingQueue<>? */
         results = new ConcurrentHashMap<>();
 
         /* Thread pools */

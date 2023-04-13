@@ -1,9 +1,9 @@
 package job_dispatcher;
 
 import job_queue.JobQueue;
-import job_queue.job.FileScanningJob;
-import job_queue.job.ScanningJob;
-import job_queue.job.WebScanningJob;
+import job_queue.job.FileJob;
+import job_queue.job.Job;
+import job_queue.job.WebJob;
 import scanner.FileScanner;
 import scanner.WebScanner;
 
@@ -25,16 +25,16 @@ public class JobDispatcherWorker implements Runnable {
         while (true) {
 
             /* Blocks if queue is empty */
-            ScanningJob job = jobs.dequeue();
+            Job job = jobs.dequeue();
 
             switch (job.getType()) {
 
                 case FILE:
-                    fileScanner.scan((FileScanningJob) job);
+                    fileScanner.scan((FileJob) job);
                     continue;
 
                 case WEB:
-                    webScanner.scan((WebScanningJob) job);
+                    webScanner.scan((WebJob) job);
                     continue;
 
                 case POISON:

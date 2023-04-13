@@ -2,7 +2,7 @@ package directory_crawler;
 
 import app.Configuration;
 import job_queue.JobQueue;
-import job_queue.job.FileScanningJob;
+import job_queue.job.FileJob;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,7 +115,7 @@ public class DirectoryCrawlerWorker implements Runnable {
                 if (!corpora.containsKey(corpus.getPath())) {
 
                     System.out.println(">> Created job for: " + corpus.getName());
-                    jobs.enqueue(new FileScanningJob(corpus));
+                    jobs.enqueue(new FileJob(corpus));
 
                     updateTextsModifiedValue(corpus);
 
@@ -128,7 +128,7 @@ public class DirectoryCrawlerWorker implements Runnable {
                 if (areTextsModified(corpora.get(corpus.getPath()))) {
 
                     System.out.println(">> Created job for: " + corpus.getName());
-                    jobs.enqueue(new FileScanningJob(corpus));
+                    jobs.enqueue(new FileJob(corpus));
 
                 }
 

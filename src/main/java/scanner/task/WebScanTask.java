@@ -2,7 +2,7 @@ package scanner.task;
 
 import app.Configuration;
 import job_queue.JobQueue;
-import job_queue.job.WebScanningJob;
+import job_queue.job.WebJob;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -46,7 +46,7 @@ public class WebScanTask implements Callable<Map<String, Integer>> {
                 Elements links = document.select("a[href]");
 
                 for (Element link : links) {
-                    jobs.enqueue(new WebScanningJob(link.attr("abs:href"), hopCount - 1));
+                    jobs.enqueue(new WebJob(link.attr("abs:href"), hopCount - 1));
                 }
 
             }

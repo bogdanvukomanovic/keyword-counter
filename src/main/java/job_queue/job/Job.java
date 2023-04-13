@@ -1,7 +1,7 @@
 package job_queue.job;
 
 
-public abstract class ScanningJob {
+public abstract class Job {
 
     protected ScanType scanType;
 

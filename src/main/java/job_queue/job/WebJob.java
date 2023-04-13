@@ -1,11 +1,11 @@
 package job_queue.job;
 
-public class WebScanningJob extends ScanningJob {
+public class WebJob extends Job {
 
     private final String URL;
     private final int hopCount;
 
-    public WebScanningJob(String URL, int hopCount) {
+    public WebJob(String URL, int hopCount) {
         this.scanType = ScanType.WEB;
         this.URL = URL;
         this.hopCount = hopCount;
