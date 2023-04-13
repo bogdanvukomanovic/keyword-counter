@@ -1,6 +1,6 @@
 package job_queue.job;
 
-public enum ScanType {
+public enum JobType {
 
     WEB,
     FILE,

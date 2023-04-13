@@ -8,7 +8,7 @@ public class FileJob extends Job {
     private final Corpus corpus;
 
     public FileJob(Corpus corpus) {
-        this.scanType = ScanType.FILE;
+        this.jobType = JobType.FILE;
         this.corpus = corpus;
     }
 

@@ -6,7 +6,7 @@ public class WebJob extends Job {
     private final int hopCount;
 
     public WebJob(String URL, int hopCount) {
-        this.scanType = ScanType.WEB;
+        this.jobType = JobType.WEB;
         this.URL = URL;
         this.hopCount = hopCount;
     }

@@ -3,10 +3,10 @@ package job_queue.job;
 
 public abstract class Job {
 
-    protected ScanType scanType;
+    protected JobType jobType;
 
-    public ScanType getType() {
-        return scanType;
+    public JobType getType() {
+        return jobType;
     }
 
 }
