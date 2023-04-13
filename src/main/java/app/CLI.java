@@ -1,5 +1,6 @@
 package app;
 
+import job_queue.job.PoisonJob;
 import job_queue.job.WebScanningJob;
 import result_retriever.response.Response;
 
@@ -111,13 +112,11 @@ public class CLI {
             switch (command) {
 
                 case Command.ADD_DIRECTORY:
-                    System.out.println(">> Command: Add directory");
                     /* TODO: Handle if directory exists */
                     Controller.directories.add(argument);
                     continue;
 
                 case Command.ADD_WEB:
-                    System.out.println(">> Command: Add web");
                     /* TODO: Handle if web path is valid */
                     Controller.jobs.enqueue(new WebScanningJob(argument, Configuration.HOP_COUNT));
                     continue;
@@ -143,12 +142,13 @@ public class CLI {
                     continue;
 
                 case Command.STOP:
-                    System.out.println(">> Command: Stop");
-                    Controller.DCWorker.stop();    /* TODO: DCWorkerThread.join() ? */
+                    Controller.DCWorker.stop();
+                    Controller.jobs.enqueue(new PoisonJob());
+                    Controller.resultRetriever.stop();
                     break;
 
                 default:
-                    throw new IllegalStateException("?"); /* TODO: Resolve */
+                    throw new IllegalStateException("Error: Unknown command " + command);
 
             }
             break;

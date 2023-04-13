@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebScannerRefreshWorker implements Runnable {
 
     private volatile boolean working = true;
-
+    private static final Object lock = new Object();
     private Set<String> cache;
 
     public WebScannerRefreshWorker(Set<String> cache) {
@@ -20,10 +20,12 @@ public class WebScannerRefreshWorker implements Runnable {
 
         while (working) {
 
-            try {
-                Thread.sleep(Configuration.URL_REFRESH_TIME);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            synchronized (lock) {
+                try {
+                    lock.wait(Configuration.URL_REFRESH_TIME);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             cache.clear();
@@ -32,10 +34,18 @@ public class WebScannerRefreshWorker implements Runnable {
 
         }
 
+        System.out.println(">> FINISHED: Web Scanner");
+
     }
 
     public void stop() {
+
         working = false;
+
+        synchronized (lock) {
+            lock.notify();
+        }
+
     }
 
 }

@@ -8,7 +8,7 @@ public class Main {
         Controller.initialize();
         CLI.loop();
 
-        System.out.println("Main finished successfully.");
+        System.out.println(">> FINISHED: Main/CLI");
 
     }
 

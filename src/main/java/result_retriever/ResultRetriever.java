@@ -247,4 +247,9 @@ public class ResultRetriever {
         webSummaryCache.set(null);
     }
 
+    public void stop() {
+        threadPool.shutdown();
+        System.out.println(">> FINISHED: Result Retriever");
+    }
+
 }

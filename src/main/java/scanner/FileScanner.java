@@ -29,4 +29,9 @@ public class FileScanner {
 
     }
 
+    public void stop() {
+        forkJoinPool.shutdown();
+        System.out.println(">> FINISHED: File Scanner");
+    }
+
 }

@@ -142,6 +142,8 @@ public class DirectoryCrawlerWorker implements Runnable {
 
         }
 
+        System.out.println(">> FINISHED: Directory Crawler");
+
     }
 
 }

@@ -64,9 +64,6 @@ public class WebScanner {
             ResultRetriever.webDomainCache.put(domain, Optional.empty());
 
 
-            System.out.println("\t\t\t\t\t\t\t" + domain);
-
-
         } catch (IOException e) {
             System.out.println("IOException");
         } catch (URISyntaxException e) {
@@ -75,6 +72,12 @@ public class WebScanner {
             System.out.println("IllegalArgumentException");
         }
 
+    }
+
+    public void stop() {
+        threadPool.shutdown();
+        System.out.println(">> FINISHED: Web Scanner");
+        webScannerRefreshWorker.stop();
     }
 
 }

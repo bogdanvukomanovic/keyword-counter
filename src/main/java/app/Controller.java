@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class Controller {
@@ -58,7 +57,6 @@ public class Controller {
 
         /* Start threads */
         DCWorkerThread.start();
-        JDWorkerThread.setDaemon(true); /* TODO: TBD */
         JDWorkerThread.start();
 
     }

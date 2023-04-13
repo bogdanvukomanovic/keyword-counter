@@ -22,8 +22,6 @@ public class JobDispatcherWorker implements Runnable {
     @Override
     public void run() {
 
-        /* TODO: Cancellation with Poison pill mechanism */
-        /* Continue in WEB and FILE cases - Break in POISON case */
         while (true) {
 
             /* Blocks if queue is empty */
@@ -35,15 +33,24 @@ public class JobDispatcherWorker implements Runnable {
                     System.out.println("Job dispatcher: FILE SCANNING JOB");
                     fileScanner.scan((FileScanningJob) job);
                     continue;
+
                 case WEB:
                     System.out.println("Job dispatcher: WEB SCANNING JOB");
                     webScanner.scan((WebScanningJob) job);
                     continue;
+
+                case POISON:
+                    fileScanner.stop();
+                    webScanner.stop();
+                    break;
+
                 default:
                     throw new IllegalStateException("Unexpected value: " + job.getType());
 
             }
 
+            System.out.println(">> FINISHED: Job Dispatcher");
+            break;
         }
 
     }
