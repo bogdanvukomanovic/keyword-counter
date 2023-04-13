@@ -37,7 +37,7 @@ public class WebScanTask implements Callable<Map<String, Integer>> {
         try {
 
             Document document = Jsoup.connect(URL).get();
-            List<String> words = List.of(document.body().text().split("\\s"));
+            List<String> words = Arrays.stream(document.body().text().split("\\s")).toList().stream().map(x -> x.replaceAll("[^a-zA-Z]", "").toLowerCase()).toList();
 
             result = countWords(words);
 

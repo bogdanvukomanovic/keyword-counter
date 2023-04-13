@@ -66,7 +66,7 @@ public class FileScanTask extends RecursiveTask<Map<String, Integer>> {
                 Scanner input = new Scanner(new File(text.getPath()));
 
                 while (input.hasNext()) {
-                    words.add(input.next());
+                    words.add(input.next().replaceAll("[^a-zA-Z]", "").toLowerCase());
                 }
 
                 // Map<String, Integer> count = words.stream().collect(Collectors.toMap(w -> w, w -> 1, Integer::sum));
@@ -88,7 +88,7 @@ public class FileScanTask extends RecursiveTask<Map<String, Integer>> {
     @Override
     protected Map<String, Integer> compute() {
 
-        Map<String, Integer> result = new HashMap<String, Integer>(); /* TODO: ConcurrentHashMap<>? */
+        Map<String, Integer> result = new HashMap<String, Integer>();
 
         if (totalTextSize() < Configuration.FILE_SCANNING_SIZE_LIMIT || texts.size() == 1) {
             result = countWords(result);
