@@ -1,12 +1,11 @@
 package job_queue.job;
 
-public class PoisonJob implements ScanningJob {
+public class PoisonJob extends ScanningJob {
 
-    private final ScanType scanType = ScanType.POISON;
-
-    @Override
-    public ScanType getType() {
-        return scanType;
+    public PoisonJob() {
+        this.scanType = ScanType.POISON;
     }
+
+
 
 }

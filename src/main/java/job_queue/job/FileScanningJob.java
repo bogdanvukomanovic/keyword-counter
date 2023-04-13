@@ -3,18 +3,13 @@ package job_queue.job;
 import directory_crawler.Corpus;
 
 
-public class FileScanningJob implements ScanningJob {
+public class FileScanningJob extends ScanningJob {
 
-    private final ScanType scanType = ScanType.FILE;
     private final Corpus corpus;
 
     public FileScanningJob(Corpus corpus) {
+        this.scanType = ScanType.FILE;
         this.corpus = corpus;
-    }
-
-    @Override
-    public ScanType getType() {
-        return scanType;
     }
 
     public Corpus getCorpus() {

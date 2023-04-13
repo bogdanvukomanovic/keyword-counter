@@ -1,8 +1,12 @@
 package job_queue.job;
 
 
-public interface ScanningJob {
+public abstract class ScanningJob {
 
-    ScanType getType();
+    protected ScanType scanType;
+
+    public ScanType getType() {
+        return scanType;
+    }
 
 }

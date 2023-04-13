@@ -1,19 +1,14 @@
 package job_queue.job;
 
-public class WebScanningJob implements ScanningJob {
+public class WebScanningJob extends ScanningJob {
 
-    private final ScanType scanType = ScanType.WEB;
     private final String URL;
     private final int hopCount;
 
     public WebScanningJob(String URL, int hopCount) {
+        this.scanType = ScanType.WEB;
         this.URL = URL;
         this.hopCount = hopCount;
-    }
-
-    @Override
-    public ScanType getType() {
-        return scanType;
     }
 
     public String getURL() {
