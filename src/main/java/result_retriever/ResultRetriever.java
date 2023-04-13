@@ -118,7 +118,7 @@ public class ResultRetriever {
                 break;
 
             default:
-                throw new IllegalStateException("Unexpected value: " + resultType);
+                throw new IllegalStateException(">> Unexpected value: " + resultType);
         }
 
         return response;
@@ -133,13 +133,13 @@ public class ResultRetriever {
             case ResultType.FILE:
 
                 if (!results.containsKey(target)) {
-                    return new Response(ResponseStatus.ERROR, "Corpus doesn't exist.", null);
+                    return new Response(ResponseStatus.ERROR, ">> Corpus doesn't exist.", null);
                 }
 
                 Result result = results.get(target);
 
                 if (!result.getResult().isDone()) {
-                    return new Response(ResponseStatus.IN_PROGRESS, "Result is not ready yet.", null);
+                    return new Response(ResponseStatus.IN_PROGRESS, ">> Result is not ready yet.", null);
                 } else {
 
                     try {
@@ -157,7 +157,7 @@ public class ResultRetriever {
             case ResultType.WEB:
 
                 if (!webDomainCache.containsKey(target)) {
-                    return new Response(ResponseStatus.ERROR, "Domain doesn't exist.", null);
+                    return new Response(ResponseStatus.ERROR, ">> Domain doesn't exist.", null);
                 }
 
                 if (webDomainCache.get(target).isEmpty()) {
@@ -167,7 +167,7 @@ public class ResultRetriever {
                 Future<Map<String, Integer>> r = webDomainCache.get(target).get();
 
                 if (!r.isDone()) {
-                    return new Response(ResponseStatus.IN_PROGRESS, "Result is not ready yet.", null);
+                    return new Response(ResponseStatus.IN_PROGRESS, ">> Result is not ready yet.", null);
                 } else {
                     try {
                         response = new Response(ResponseStatus.OK, "", r.get());
@@ -181,7 +181,7 @@ public class ResultRetriever {
                 break;
 
             default:
-                throw new IllegalStateException("Unexpected value: " + resultType);
+                throw new IllegalStateException(">> Unexpected value: " + resultType);
         }
 
         return response;
@@ -198,7 +198,7 @@ public class ResultRetriever {
                 fileSummaryCache.compareAndSet(null, threadPool.submit(new FileSummaryTask(results)));
 
                 if (!fileSummaryCache.get().isDone()) {
-                    response = new Response(ResponseStatus.IN_PROGRESS, "Result is not ready yet.", null);
+                    response = new Response(ResponseStatus.IN_PROGRESS, ">> Result is not ready yet.", null);
                 } else {
 
                     try {
@@ -217,7 +217,7 @@ public class ResultRetriever {
                 webSummaryCache.compareAndSet(null, threadPool.submit(new WebSummaryTask(results)));
 
                 if (!webSummaryCache.get().isDone()) {
-                    response = new Response(ResponseStatus.IN_PROGRESS, "Result is not ready yet.", null);
+                    response = new Response(ResponseStatus.IN_PROGRESS, ">> Result is not ready yet.", null);
                 } else {
 
                     try {
@@ -232,7 +232,7 @@ public class ResultRetriever {
                 break;
 
             default:
-                throw new IllegalStateException("Unexpected value: " + resultType);
+                throw new IllegalStateException(">> Unexpected value: " + resultType);
 
         }
 

@@ -2,11 +2,24 @@ package app;
 
 import job_queue.job.PoisonJob;
 import job_queue.job.WebScanningJob;
-import result_retriever.response.Response;
+import org.jsoup.Jsoup;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class CLI {
+
+    private static final String logo =
+                    " ___  __     ___       __    ________   ________                ________   ________    _________   ________     \n"                                            +
+                    "|\\  \\|\\  \\  |\\  \\     |\\  \\ |\\   __  \\ |\\   ___ \\              |\\   ____\\ |\\   ___  \\ |\\___   ___\\|\\   __  \\    \n"                        +
+                    "\\ \\  \\/  /__\\ \\  \\    \\ \\  \\\\ \\  \\|\\  \\\\ \\  \\_|\\ \\   _________ \\ \\  \\___| \\ \\  \\\\ \\  \\\\|___ \\  \\_|\\ \\  \\|\\  \\   \n"        +
+                    " \\ \\   ___  \\\\ \\  \\  __\\ \\  \\\\ \\   _  _\\\\ \\  \\ \\\\ \\ |\\_________\\\\ \\  \\     \\ \\  \\\\ \\  \\    \\ \\  \\  \\ \\   _  _\\  \n"         +
+                    "  \\ \\  \\\\ \\  \\\\ \\  \\|\\__\\_\\  \\\\ \\  \\\\  \\ \\ \\  \\_\\\\ \\\\|_________| \\ \\  \\____ \\ \\  \\\\ \\  \\    \\ \\  \\  \\ \\  \\\\  \\ \n"   +
+                    "   \\ \\__\\\\ \\__\\\\ \\____________\\\\ \\__\\\\ _\\ \\ \\_______\\             \\ \\_______\\\\ \\__\\\\ \\__\\    \\ \\__\\  \\ \\__\\\\ _\\ \n"          +
+                    "    \\|__| \\|__| \\|____________| \\|__|\\|__| \\|_______|              \\|_______| \\|__| \\|__|     \\|__|   \\|__|\\|_ |\n";
 
     private static String command = "";
     private static String argument = "";
@@ -24,12 +37,45 @@ public class CLI {
         final static String CLEAR_WEB_SUMMARY = "cws";
         final static String STOP = "stop";
 
+        static Set<String> COMMANDS_WITH_PARAMS = new HashSet<>() {
+            {
+                add(ADD_DIRECTORY.toString()); add(ADD_WEB.toString());
+                add(GET.toString()); add(QUERY.toString());
+            }
+        };
+
+        static Set<String> COMMANDS_WITHOUT_PARAMS = new HashSet<>() {
+            {
+                add(STOP.toString());
+                add(CLEAR_FILE_SUMMARY.toString()); add(CLEAR_WEB_SUMMARY.toString());
+            }
+        };
+
     }
 
     private class Type {
 
         final static String FILE = "file";
         final static String WEB = "web";
+
+    }
+
+    private static void welcome() {
+
+        System.out.println(logo);
+
+        System.out.println("List of commands: ");
+        System.out.println("\t- ad <directory>          - Add directory");
+        System.out.println("\t- aw <url>                - Add web");
+        System.out.println("\t- get <type>|<target>     - Blocking, get corpus/domain result");
+        System.out.println("\t- get <type>|summary      - Blocking, get file/web summary result");
+        System.out.println("\t- query <type>|<target>   - Non-blocking, get corpus/domain result");
+        System.out.println("\t- query <type>|summary    - Non-Blocking, get file/web summary result");
+        System.out.println("\t- cws                     - Clear web summary");
+        System.out.println("\t- cfs                     - Clear file summary");
+        System.out.println("\t- stop                    - Quit");
+
+        System.out.println("---------------------------------------");
 
     }
 
@@ -41,13 +87,18 @@ public class CLI {
 
             command = xs[0];
 
-            if (command.equals(Command.STOP) || command.equals(Command.CLEAR_FILE_SUMMARY) || command.equals(Command.CLEAR_WEB_SUMMARY)) {
+            if (Command.COMMANDS_WITHOUT_PARAMS.contains(command)) {
                 return true;
             } else {
                 return false;
             }
 
         }
+
+        if (!Command.COMMANDS_WITH_PARAMS.contains(xs[0])) {
+            return false;
+        }
+
 
         if (xs.length != 2) {
             return false;
@@ -78,17 +129,40 @@ public class CLI {
         return true;
     }
 
+    private static boolean isDirectoryValid(String directory) {
+
+        if (!Files.exists(Path.of(Configuration.DATA_ROOT + directory))) {
+            System.out.println(">> Error: Data folder '" + directory + "' doesn't exist.");
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+    private static boolean isURLValid(String URL) {
+
+        try {
+            Jsoup.connect(URL).get();
+        } catch (Exception e) {
+            System.out.println(">> Error: Invalid URL. " + e.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
 
     static void loop() {
 
-        Scanner sc = new Scanner(System.in);
+        welcome();
 
-        Response response;
+        Scanner sc = new Scanner(System.in);
 
         while (true) {
 
             if (!parse(sc.nextLine())) {
-                System.out.println("Error: Invalid command format.");
+                System.out.println(">> Error: Invalid command format.");
                 continue;
             }
 
@@ -97,13 +171,11 @@ public class CLI {
                 switch (command) {
 
                     case Command.GET:
-                        response = Controller.resultRetriever.getSummary(type);
-                        System.out.println(response);
+                        System.out.println(Controller.resultRetriever.getSummary(type));
                         continue;
 
                     case Command.QUERY:
-                        response = Controller.resultRetriever.querySummary(type);
-                        System.out.println(response);
+                        System.out.println(Controller.resultRetriever.querySummary(type));
                         continue;
                 }
 
@@ -112,25 +184,29 @@ public class CLI {
             switch (command) {
 
                 case Command.ADD_DIRECTORY:
-                    /* TODO: Handle if directory exists */
-                    Controller.directories.add(argument);
+
+                    if (isDirectoryValid(argument)) {
+                        Controller.directories.add(argument);
+                    }
+
                     continue;
 
                 case Command.ADD_WEB:
-                    /* TODO: Handle if web path is valid */
-                    Controller.jobs.enqueue(new WebScanningJob(argument, Configuration.HOP_COUNT));
+
+                    if (isURLValid(argument)) {
+                        Controller.jobs.enqueue(new WebScanningJob(argument, Configuration.HOP_COUNT));
+                    }
+
                     continue;
 
                 case Command.GET:
 
-                    response = Controller.resultRetriever.getResult(type, target);
-                    System.out.println(response);
+                    System.out.println(Controller.resultRetriever.getResult(type, target));
                     continue;
 
                 case Command.QUERY:
 
-                    response = Controller.resultRetriever.queryResult(type, target);
-                    System.out.println(response);
+                    System.out.println(Controller.resultRetriever.queryResult(type, target));
                     continue;
 
                 case Command.CLEAR_FILE_SUMMARY:
@@ -148,7 +224,7 @@ public class CLI {
                     break;
 
                 default:
-                    throw new IllegalStateException("Error: Unknown command " + command);
+                    throw new IllegalStateException(">> Error: Unknown command " + command);
 
             }
             break;

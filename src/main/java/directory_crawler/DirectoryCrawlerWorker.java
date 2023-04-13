@@ -114,7 +114,7 @@ public class DirectoryCrawlerWorker implements Runnable {
                 /* Brand-new corpus */
                 if (!corpora.containsKey(corpus.getPath())) {
 
-                    System.out.println("Created job for corpus: " + corpus.getName());
+                    System.out.println(">> Created job for: " + corpus.getName());
                     jobs.enqueue(new FileScanningJob(corpus));
 
                     updateTextsModifiedValue(corpus);
@@ -127,7 +127,7 @@ public class DirectoryCrawlerWorker implements Runnable {
                 /* Old corpus - check if any texts are modified or added in the meantime */
                 if (areTextsModified(corpora.get(corpus.getPath()))) {
 
-                    System.out.println("Created job for corpus: " + corpus.getName());
+                    System.out.println(">> Created job for: " + corpus.getName());
                     jobs.enqueue(new FileScanningJob(corpus));
 
                 }

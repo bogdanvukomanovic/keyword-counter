@@ -30,12 +30,10 @@ public class JobDispatcherWorker implements Runnable {
             switch (job.getType()) {
 
                 case FILE:
-                    System.out.println("Job dispatcher: FILE SCANNING JOB");
                     fileScanner.scan((FileScanningJob) job);
                     continue;
 
                 case WEB:
-                    System.out.println("Job dispatcher: WEB SCANNING JOB");
                     webScanner.scan((WebScanningJob) job);
                     continue;
 
@@ -45,7 +43,7 @@ public class JobDispatcherWorker implements Runnable {
                     break;
 
                 default:
-                    throw new IllegalStateException("Unexpected value: " + job.getType());
+                    throw new IllegalStateException(">> Unexpected value: " + job.getType());
 
             }
 

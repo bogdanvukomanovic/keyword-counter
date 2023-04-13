@@ -53,6 +53,7 @@ public class WebScanner {
 
             cache.add(job.getURL());
 
+            System.out.println(">> Starting file scan for: web|" + job.getURL() + " (Domain: " + domain + ")");
             Future<Map<String, Integer>> result = threadPool.submit(new WebScanTask(job.getURL(), job.getHopCount(), jobs));
 
             results.put(job.getURL(), new WebResult(result, domain));
@@ -64,12 +65,8 @@ public class WebScanner {
             ResultRetriever.webDomainCache.put(domain, Optional.empty());
 
 
-        } catch (IOException e) {
-            System.out.println("IOException");
-        } catch (URISyntaxException e) {
-            System.out.println("URISyntaxException");
-        } catch (IllegalArgumentException e) {
-            System.out.println("IllegalArgumentException");
+        } catch (Exception e) {
+            System.out.println(">> Error: Did not create new job because of non-supported/invalid/unreachable URL. (" + job.getURL() + ")");
         }
 
     }

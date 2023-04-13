@@ -22,6 +22,7 @@ public class FileScanner {
 
     public void scan(FileScanningJob job) {
 
+        System.out.println(">> Starting file scan for: file|" + job.getCorpus().getName());
         Future<Map<String, Integer>> result = forkJoinPool.submit(new FileScanTask(job.getCorpus().getTexts()));
 
         results.put(job.getCorpus().getName(), new FileResult(result, job.getCorpus().getName()));
