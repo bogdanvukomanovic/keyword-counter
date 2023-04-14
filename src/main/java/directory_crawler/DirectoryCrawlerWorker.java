@@ -3,16 +3,14 @@ package directory_crawler;
 import app.Configuration;
 import job_queue.JobQueue;
 import job_queue.job.FileJob;
+import result_retriever.result.Result;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class DirectoryCrawlerWorker implements Runnable {
@@ -68,6 +66,12 @@ public class DirectoryCrawlerWorker implements Runnable {
     private boolean areTextsModified(Corpus corpus) {
 
         boolean x = false;
+
+        List<Text> currentTexts = extractAllTexts(corpus.getPath());
+
+        if (currentTexts.size() != corpus.getTexts().size()) {
+            corpus.setTexts(currentTexts);
+        }
 
         for (Text text : corpus.getTexts()) {
 

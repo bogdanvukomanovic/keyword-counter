@@ -29,4 +29,8 @@ public class Corpus {
         return texts;
     }
 
+    public void setTexts(List<Text> texts) {
+        this.texts = texts;
+    }
+
 }
