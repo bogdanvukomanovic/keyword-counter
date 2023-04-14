@@ -214,6 +214,7 @@ public class ResultRetriever {
                 break;
 
             case ResultType.WEB:
+
                 webSummaryCache.compareAndSet(null, threadPool.submit(new WebSummaryTask(results)));
 
                 if (!webSummaryCache.get().isDone()) {
@@ -221,7 +222,7 @@ public class ResultRetriever {
                 } else {
 
                     try {
-                        response = new Response(ResponseStatus.OK, "", fileSummaryCache.get().get());
+                        response = new Response(ResponseStatus.OK, "", webSummaryCache.get().get());
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     } catch (ExecutionException e) {
