@@ -4,6 +4,7 @@ import result_retriever.response.Response;
 import result_retriever.response.ResponseStatus;
 import result_retriever.result.Result;
 import result_retriever.task.FileSummaryTask;
+import result_retriever.task.WebAddToDomainCacheTask;
 import result_retriever.task.WebDomainTask;
 import result_retriever.task.WebSummaryTask;
 
@@ -59,6 +60,27 @@ public class ResultRetriever {
 
                 if (!webDomainCache.containsKey(target)) {
                     return new Response(ResponseStatus.ERROR, "Domain doesn't exist.", null);
+                }
+
+                /* If webSummaryCache is valid, no need to compute result again. */
+                Future<Map<String, Map<String, Integer>>> futureSummaryCache = webSummaryCache.get();
+                if (futureSummaryCache != null) {
+
+                    try {
+
+                        Map<String, Integer> result = futureSummaryCache.get().get(target);
+
+                        if (result != null) {
+                            webDomainCache.put(target, Optional.of(threadPool.submit(new WebAddToDomainCacheTask(result)))); /* TODO: Check if this is okay  */
+                            return new Response(ResponseStatus.OK, "", result);
+                        }
+
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+
                 }
 
                 if (webDomainCache.get(target).isEmpty()) {
@@ -158,6 +180,27 @@ public class ResultRetriever {
 
                 if (!webDomainCache.containsKey(target)) {
                     return new Response(ResponseStatus.ERROR, ">> Domain doesn't exist.", null);
+                }
+
+                /* If webSummaryCache is valid, no need to compute result again. */
+                Future<Map<String, Map<String, Integer>>> futureSummaryCache = webSummaryCache.get();
+                if (futureSummaryCache != null && futureSummaryCache.isDone()) {
+
+                    try {
+
+                        Map<String, Integer> r = futureSummaryCache.get().get(target);
+
+                        if (r != null) {
+                            webDomainCache.put(target, Optional.of(threadPool.submit(new WebAddToDomainCacheTask(r)))); /* TODO: Check if this is okay  */
+                            return new Response(ResponseStatus.OK, "", r);
+                        }
+
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+
                 }
 
                 if (webDomainCache.get(target).isEmpty()) {
