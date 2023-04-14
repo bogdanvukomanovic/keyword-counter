@@ -77,7 +77,7 @@ public class FileScanTask extends RecursiveTask<Map<String, Integer>> {
                                .collect(Collectors.groupingBy(Map.Entry::getKey, Collectors.summingInt(Map.Entry::getValue)));
 
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.out.println(">> Error: Cannot open file: " + text.getPath());
             }
 
         }
