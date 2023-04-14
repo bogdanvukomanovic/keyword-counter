@@ -4,22 +4,15 @@ import job_queue.job.PoisonJob;
 import job_queue.job.WebJob;
 import org.jsoup.Jsoup;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 
 public class CLI {
-
-    private static final String logo =
-                    " ___  __     ___       __    ________   ________                ________   ________    _________   ________     \n"                                            +
-                    "|\\  \\|\\  \\  |\\  \\     |\\  \\ |\\   __  \\ |\\   ___ \\              |\\   ____\\ |\\   ___  \\ |\\___   ___\\|\\   __  \\    \n"                        +
-                    "\\ \\  \\/  /__\\ \\  \\    \\ \\  \\\\ \\  \\|\\  \\\\ \\  \\_|\\ \\   _________ \\ \\  \\___| \\ \\  \\\\ \\  \\\\|___ \\  \\_|\\ \\  \\|\\  \\   \n"        +
-                    " \\ \\   ___  \\\\ \\  \\  __\\ \\  \\\\ \\   _  _\\\\ \\  \\ \\\\ \\ |\\_________\\\\ \\  \\     \\ \\  \\\\ \\  \\    \\ \\  \\  \\ \\   _  _\\  \n"         +
-                    "  \\ \\  \\\\ \\  \\\\ \\  \\|\\__\\_\\  \\\\ \\  \\\\  \\ \\ \\  \\_\\\\ \\\\|_________| \\ \\  \\____ \\ \\  \\\\ \\  \\    \\ \\  \\  \\ \\  \\\\  \\ \n"   +
-                    "   \\ \\__\\\\ \\__\\\\ \\____________\\\\ \\__\\\\ _\\ \\ \\_______\\             \\ \\_______\\\\ \\__\\\\ \\__\\    \\ \\__\\  \\ \\__\\\\ _\\ \n"          +
-                    "    \\|__| \\|__| \\|____________| \\|__|\\|__| \\|_______|              \\|_______| \\|__| \\|__|     \\|__|   \\|__|\\|_ |\n";
 
     private static String command = "";
     private static String argument = "";
@@ -62,9 +55,14 @@ public class CLI {
 
     private static void welcome() {
 
-        System.out.println(logo);
+        try {
+            String logo = new String(Files.readAllBytes(Paths.get("./src/main/resources/logo.txt")));
+            System.out.println(logo);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        System.out.println("List of commands: ");
+        System.out.println("\nList of commands: ");
         System.out.println("\t- ad <directory>          - Add directory");
         System.out.println("\t- aw <url>                - Add web");
         System.out.println("\t- get <type>|<target>     - Blocking, get corpus/domain result");
@@ -75,7 +73,7 @@ public class CLI {
         System.out.println("\t- cfs                     - Clear file summary");
         System.out.println("\t- stop                    - Quit");
 
-        System.out.println("---------------------------------------");
+        System.out.println("\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
 
     }
 
@@ -230,7 +228,8 @@ public class CLI {
             break;
         }
 
-    }
+        sc.close();
 
+    }
 
 }
