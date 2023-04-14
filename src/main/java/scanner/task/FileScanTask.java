@@ -66,7 +66,7 @@ public class FileScanTask extends RecursiveTask<Map<String, Integer>> {
                 Scanner input = new Scanner(new File(text.getPath()));
 
                 while (input.hasNext()) {
-                    words.add(input.next().replaceAll("[^a-zA-Z]", "").toLowerCase());
+                    words.add(input.next().replaceAll("[^a-zA-Z]", ""));
                 }
 
                 // Map<String, Integer> count = words.stream().collect(Collectors.toMap(w -> w, w -> 1, Integer::sum));
