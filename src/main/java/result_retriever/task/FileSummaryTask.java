@@ -3,12 +3,13 @@ package result_retriever.task;
 import result_retriever.result.Result;
 import result_retriever.result.ResultType;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class FileSummaryTask implements Callable<Map<String, Result>> {
+public class FileSummaryTask implements Callable<Map<String, Map<String, Integer>>> {
 
     private Map<String, Result> results;
 
@@ -17,15 +18,14 @@ public class FileSummaryTask implements Callable<Map<String, Result>> {
     }
 
     @Override
-    public Map<String, Result> call() throws Exception {
+    public Map<String, Map<String, Integer>> call() throws Exception {
 
-        /* TODO: Check if this is fine: Before returning assert that all counting jobs are finished */
-        Map<String, Result> fileResults = getFileTypeEntries(results);
-        for (Map.Entry<String, Result> entry : fileResults.entrySet()) {
-            entry.getValue().getResult().get();
+        Map<String, Map<String, Integer>> result = new HashMap<>();
+        for (Map.Entry<String, Result> entry : getFileTypeEntries(results).entrySet()) {
+            result.put(entry.getKey(), entry.getValue().getResult().get());
         }
 
-        return getFileTypeEntries(fileResults);
+        return result;
     }
 
 //    private boolean isFile(Result result) {

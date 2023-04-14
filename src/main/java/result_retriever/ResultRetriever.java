@@ -27,7 +27,7 @@ public class ResultRetriever {
     private Map<String, Result> results;
     public static Map<String, Optional<Future<Map<String, Integer>>>> webDomainCache = new ConcurrentHashMap<>();
     public static AtomicReference<Future<Map<String, Map<String, Integer>>>> webSummaryCache = new AtomicReference<>();
-    public static AtomicReference<Future<Map<String, Result>>> fileSummaryCache = new AtomicReference<>();
+    public static AtomicReference<Future<Map<String, Map<String, Integer>>>> fileSummaryCache = new AtomicReference<>();
 
     public ResultRetriever(Map<String, Result> results) {
         this.results = results;
