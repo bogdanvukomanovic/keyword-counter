@@ -6,6 +6,4 @@ public class PoisonJob extends Job {
         this.jobType = JobType.POISON;
     }
 
-
-
 }

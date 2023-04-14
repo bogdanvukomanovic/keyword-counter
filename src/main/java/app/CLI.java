@@ -63,15 +63,15 @@ public class CLI {
         }
 
         System.out.println("\nList of commands: ");
-        System.out.println("\t- ad <directory>          - Add directory");
-        System.out.println("\t- aw <url>                - Add web");
-        System.out.println("\t- get <type>|<target>     - Blocking, get corpus/domain result");
-        System.out.println("\t- get <type>|summary      - Blocking, get file/web summary result");
-        System.out.println("\t- query <type>|<target>   - Non-blocking, get corpus/domain result");
-        System.out.println("\t- query <type>|summary    - Non-Blocking, get file/web summary result");
-        System.out.println("\t- cws                     - Clear web summary");
-        System.out.println("\t- cfs                     - Clear file summary");
-        System.out.println("\t- stop                    - Quit");
+        System.out.println("\t>>  ad <directory>          - Add directory");
+        System.out.println("\t>>  aw <url>                - Add web");
+        System.out.println("\t>>  get <type>|<target>     - Blocking, get corpus/domain result");
+        System.out.println("\t>>  get <type>|summary      - Blocking, get file/web summary result");
+        System.out.println("\t>>  query <type>|<target>   - Non-blocking, get corpus/domain result");
+        System.out.println("\t>>  query <type>|summary    - Non-Blocking, get file/web summary result");
+        System.out.println("\t>>  cws                     - Clear web summary");
+        System.out.println("\t>>  cfs                     - Clear file summary");
+        System.out.println("\t>>  stop                    - Quit");
 
         System.out.println("\n- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -\n");
 
@@ -149,7 +149,6 @@ public class CLI {
 
         return true;
     }
-
 
     static void loop() {
 

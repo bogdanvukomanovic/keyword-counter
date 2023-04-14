@@ -5,6 +5,8 @@ import result_retriever.ResultRetriever;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+/* TODO: Maybe move to WebScanner as private class? */
 public class WebScannerRefreshWorker implements Runnable {
 
     private volatile boolean working = true;
