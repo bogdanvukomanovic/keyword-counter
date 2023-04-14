@@ -31,19 +31,22 @@ public class ResultRetriever {
 
     public ResultRetriever(Map<String, Result> results) {
         this.results = results;
-        this.fileSummaryCache.set(threadPool.submit(new FileSummaryTask(results))); /* TODO: Write comment */
     }
 
     public Response getResult(String resultType, String target) {
 
         Response response;
 
+        if (results.isEmpty()) {
+            return new Response(ResponseStatus.ERROR, ">> Zero processed corpora/domains.", null);
+        }
+
         switch (resultType) {
 
             case ResultType.FILE:
 
                 if (!results.containsKey(target)) {
-                    return new Response(ResponseStatus.ERROR, "Corpus doesn't exist.", null);
+                    return new Response(ResponseStatus.ERROR, ">> Corpus doesn't exist.", null);
                 }
 
                 try {
@@ -59,7 +62,7 @@ public class ResultRetriever {
             case ResultType.WEB:
 
                 if (!webDomainCache.containsKey(target)) {
-                    return new Response(ResponseStatus.ERROR, "Domain doesn't exist.", null);
+                    return new Response(ResponseStatus.ERROR, ">> Domain doesn't exist.", null);
                 }
 
                 /* If webSummaryCache is valid, no need to compute result again. */
@@ -98,7 +101,7 @@ public class ResultRetriever {
                 break;
 
             default:
-                throw new IllegalStateException("Unexpected value: " + resultType);
+                throw new IllegalStateException(">> Unexpected value: " + resultType);
 
         }
 
@@ -108,6 +111,10 @@ public class ResultRetriever {
     public Response getSummary(String resultType) {
 
         Response response;
+
+        if (results.isEmpty()) {
+            return new Response(ResponseStatus.ERROR, ">> Zero processed corpora/domains.", null);
+        }
 
         switch (resultType) {
 
@@ -149,6 +156,10 @@ public class ResultRetriever {
     public Response queryResult(String resultType, String target) {
 
         Response response;
+
+        if (results.isEmpty()) {
+            return new Response(ResponseStatus.ERROR, ">> Zero processed corpora/domains.", null);
+        }
 
         switch (resultType) {
 
@@ -234,6 +245,10 @@ public class ResultRetriever {
 
         Response response;
 
+        if (results.isEmpty()) {
+            return new Response(ResponseStatus.ERROR, ">> Zero processed corpora/domains.", null);
+        }
+
         switch (resultType) {
 
             case ResultType.FILE:
@@ -285,10 +300,12 @@ public class ResultRetriever {
 
     public void clearFileSummary() {
         fileSummaryCache.set(null);
+        System.out.println(">> File summary cleared");
     }
 
     public void clearWebSummary() {
         webSummaryCache.set(null);
+        System.out.println(">> Web summary cleared");
     }
 
     public void stop() {
